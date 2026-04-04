@@ -29,6 +29,15 @@ const Storage = {
     this.saveAll(this.getAll().filter(s => s.id !== id));
   },
 
+  incrementViews(id) {
+    const stories = this.getAll();
+    const story = stories.find(s => s.id === id);
+    if (story) {
+      story.views = (story.views || 0) + 1;
+      this.saveAll(stories);
+    }
+  },
+
   generateId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
   }
@@ -45,6 +54,7 @@ function createEmptyStory(title, description, author, genre) {
     coverColor: randomColor(),
     published: false,
     createdAt: Date.now(),
+    views: 0,
     startNodeId,
     nodes: {
       [startNodeId]: {
@@ -101,6 +111,7 @@ function initSampleData() {
     coverColor: '#7c3aed',
     published: true,
     createdAt: Date.now(),
+    views: 0,
     startNodeId: n1,
     nodes: {
       [n1]: {

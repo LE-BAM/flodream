@@ -129,6 +129,7 @@
       }
       document.title = story.title + ' — Flodream';
       document.getElementById('play-title').textContent = story.title;
+      Storage.incrementViews(story.id);
       currentNodeId = story.startNodeId || Object.keys(story.nodes)[0];
       render();
     }

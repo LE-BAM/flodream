@@ -110,6 +110,29 @@
     .story-footer { display: flex; align-items: center; justify-content: space-between; }
     .story-author { font-size: 0.75rem; color: var(--text-dim); }
 
+    /* Rank badge */
+    .rank-badge {
+      position: absolute; top: 10px; left: 10px; z-index: 2;
+      width: 26px; height: 26px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 700;
+    }
+    .rank-1 { background: #FFD700; color: #000; }
+    .rank-2 { background: #C0C0C0; color: #000; }
+    .rank-3 { background: #CD7F32; color: #fff; }
+
+    /* Sort bar */
+    .sort-bar { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 1.25rem; }
+    .sort-lbl { font-size: 0.7rem; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-right: 0.25rem; }
+    .sort-btn {
+      padding: 0.25rem 0.85rem; border-radius: var(--radius-pill);
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text-muted); font-size: 0.75rem; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: all 0.15s;
+    }
+    .sort-btn:hover { color: var(--text); border-color: var(--text); }
+    .sort-btn.active { background: var(--text); color: #000; border-color: var(--text); }
+
     /* Play button — circular */
     .play-circle {
       width: 40px; height: 40px;
@@ -164,6 +187,12 @@
         <span id="story-count" class="text-muted text-sm"></span>
       </div>
 
+      <div class="sort-bar">
+        <span class="sort-lbl">정렬</span>
+        <button class="sort-btn active" data-sort="views">조회수순</button>
+        <button class="sort-btn" data-sort="newest">최신순</button>
+      </div>
+
       <div class="genre-filter" id="genre-filter">
         <button class="genre-btn active" data-genre="all">전체</button>
         <button class="genre-btn" data-genre="SF">SF</button>
@@ -185,10 +214,19 @@
   <script>
     const GENRE_EMOJI = { SF:'🚀', '판타지':'⚔️', '로맨스':'💕', '공포':'👻', '미스터리':'🔍', '기타':'📖' };
     let currentGenre = 'all';
+    let currentSort = 'views';
 
     function renderStories() {
       const all = Storage.getAll().filter(s => s.published);
-      const filtered = currentGenre === 'all' ? all : all.filter(s => s.genre === currentGenre);
+      let filtered = currentGenre === 'all' ? all : all.filter(s => s.genre === currentGenre);
+
+      // Sort
+      if (currentSort === 'views') {
+        filtered = [...filtered].sort((a, b) => (b.views || 0) - (a.views || 0));
+      } else {
+        filtered = [...filtered].sort((a, b) => b.createdAt - a.createdAt);
+      }
+
       document.getElementById('story-count').textContent = `${filtered.length}개`;
 
       const grid = document.getElementById('stories-grid');
@@ -203,13 +241,31 @@
         return;
       }
 
-      grid.innerHTML = filtered.map(story => {
+      // 장르 내 랭킹 계산 (조회수 기준)
+      const rankMap = {};
+      const genreGroups = {};
+      filtered.forEach(s => {
+        if (!genreGroups[s.genre]) genreGroups[s.genre] = [];
+        genreGroups[s.genre].push(s);
+      });
+      Object.values(genreGroups).forEach(group => {
+        const sorted = [...group].sort((a, b) => (b.views || 0) - (a.views || 0));
+        sorted.forEach((s, i) => { rankMap[s.id] = i + 1; });
+      });
+
+      grid.innerHTML = filtered.map((story, globalIdx) => {
         const emoji = GENRE_EMOJI[story.genre] || '📖';
         const nc = Object.keys(story.nodes || {}).length;
         const ec = Object.values(story.nodes || {}).filter(n => n.isEnding).length;
+        const views = story.views || 0;
+        const genreRank = rankMap[story.id];
+        const rankBadge = genreRank <= 3
+          ? `<div class="rank-badge rank-${genreRank}">${genreRank}</div>` : '';
+
         return `
           <div class="story-card" onclick="location.href='play.html?id=${story.id}'">
-            <div class="story-cover" style="background:linear-gradient(145deg,${story.coverColor}60,${story.coverColor}20)">
+            <div class="story-cover" style="background:linear-gradient(145deg,${story.coverColor}60,${story.coverColor}20);position:relative">
+              ${rankBadge}
               <span style="position:relative;z-index:1">${emoji}</span>
             </div>
             <div class="story-body">
@@ -220,7 +276,7 @@
               <h3 class="story-title">${escapeHtml(story.title)}</h3>
               <p class="story-desc">${escapeHtml(story.description)}</p>
               <div class="story-footer">
-                <span class="story-author">by ${escapeHtml(story.author)}</span>
+                <span style="font-size:0.72rem;color:var(--text-dim)">👁 ${views.toLocaleString()} · by ${escapeHtml(story.author)}</span>
                 <button class="play-circle" onclick="event.stopPropagation();location.href='play.html?id=${story.id}'" title="플레이">▶</button>
               </div>
             </div>
@@ -229,9 +285,10 @@
 
       // Stats
       const totalAll = Storage.getAll();
+      const totalViews = totalAll.reduce((s, st) => s + (st.views || 0), 0);
       document.getElementById('stats-row').innerHTML = `
-        <div class="stat-item"><div class="stat-num">${totalAll.length}</div><div class="stat-lbl">전체 스토리</div></div>
-        <div class="stat-item"><div class="stat-num">${totalAll.filter(s=>s.published).length}</div><div class="stat-lbl">공개됨</div></div>
+        <div class="stat-item"><div class="stat-num">${totalAll.filter(s=>s.published).length}</div><div class="stat-lbl">공개 스토리</div></div>
+        <div class="stat-item"><div class="stat-num">${totalViews.toLocaleString()}</div><div class="stat-lbl">총 조회수</div></div>
         <div class="stat-item"><div class="stat-num">${totalAll.reduce((s,st)=>s+Object.keys(st.nodes||{}).length,0)}</div><div class="stat-lbl">총 장면</div></div>`;
     }
 
@@ -241,6 +298,15 @@
       document.querySelectorAll('.genre-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentGenre = btn.dataset.genre;
+      renderStories();
+    });
+
+    document.querySelector('.sort-bar').addEventListener('click', e => {
+      const btn = e.target.closest('.sort-btn');
+      if (!btn) return;
+      document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentSort = btn.dataset.sort;
       renderStories();
     });
 
