@@ -1,0 +1,248 @@
+/* ===== Flodream — Spotify Design System ===== */
+:root {
+  /* Spotify palette */
+  --bg:           #121212;
+  --surface:      #181818;
+  --surface-2:    #1f1f1f;
+  --surface-3:    #252525;
+  --border:       #4d4d4d;
+  --border-light: #7c7c7c;
+
+  --accent:       #1ed760;   /* Spotify Green — functional only */
+  --accent-hover: #1fdf64;
+  --accent-text:  #000000;   /* text on green */
+
+  --text:         #ffffff;
+  --text-muted:   #b3b3b3;   /* silver — secondary */
+  --text-dim:     #6a6a6a;
+
+  --danger:       #f3727f;
+  --warning:      #ffa42b;
+  --info:         #539df5;
+  --success:      #1ed760;   /* green = success */
+
+  /* Shadows */
+  --shadow-dialog:  rgba(0,0,0,0.5) 0px 8px 24px;
+  --shadow-card:    rgba(0,0,0,0.3) 0px 8px 8px;
+  --shadow-inset:   rgb(18,18,18) 0px 1px 0px, rgb(124,124,124) 0px 0px 0px 1px inset;
+
+  /* Radius — Spotify pill/circle geometry */
+  --radius-pill:   9999px;
+  --radius-lg:     500px;
+  --radius:        8px;
+  --radius-sm:     6px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans KR', 'Helvetica Neue', helvetica, arial,
+    'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Malgun Gothic', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ---- Navbar ---- */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.75rem;
+  height: 64px;
+  background: #000000;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.navbar-brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-decoration: none;
+  letter-spacing: -0.3px;
+}
+.navbar-nav { display: flex; gap: 0.35rem; list-style: none; }
+.navbar-nav a {
+  text-decoration: none;
+  color: var(--text-muted);
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.875rem;
+  font-weight: 700;
+  transition: all 0.15s;
+  letter-spacing: 0.1px;
+}
+.navbar-nav a:hover { color: var(--text); }
+.navbar-nav a.active {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+/* ---- Buttons — pill geometry + uppercase labels ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  transition: all 0.15s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* Green — primary CTA */
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+.btn-primary:hover {
+  background: var(--accent-hover);
+  transform: scale(1.02);
+  box-shadow: rgba(0,0,0,0.3) 0px 8px 8px;
+}
+
+/* Dark pill — secondary */
+.btn-secondary {
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { background: var(--surface-3); border-color: var(--text); }
+
+/* Outlined — ghost */
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
+}
+.btn-ghost:hover { color: var(--text); border-color: var(--text); }
+
+/* Danger */
+.btn-danger {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid var(--border);
+}
+.btn-danger:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+
+/* Success (re-publish) */
+.btn-success {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--border);
+}
+.btn-success:hover { background: var(--accent); color: #000; border-color: var(--accent); }
+
+.btn-sm  { padding: 0.3rem 0.9rem; font-size: 0.75rem; letter-spacing: 1.2px; }
+.btn-lg  { padding: 0.75rem 2rem; font-size: 0.875rem; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+
+/* ---- Badges ---- */
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.badge-accent  { background: rgba(30,215,96,0.15);  color: var(--accent); }
+.badge-success { background: rgba(30,215,96,0.15);  color: var(--accent); }
+.badge-muted   { background: var(--surface-2);       color: var(--text-muted); }
+.badge-danger  { background: rgba(243,114,127,0.15); color: var(--danger); }
+
+/* ---- Forms ---- */
+.form-group { margin-bottom: 1rem; }
+label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+input[type="text"], input[type="email"], select, textarea {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  background: var(--surface-2);
+  border: none;
+  box-shadow: var(--shadow-inset);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  transition: box-shadow 0.15s;
+}
+input[type="text"]:focus, input[type="email"]:focus, select:focus, textarea:focus {
+  box-shadow: rgb(18,18,18) 0px 1px 0px, var(--accent) 0px 0px 0px 1px inset;
+}
+textarea { resize: vertical; min-height: 120px; line-height: 1.7; }
+select option { background: var(--surface-2); }
+
+/* ---- Modal ---- */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200;
+  backdrop-filter: blur(8px);
+}
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 2rem;
+  width: 90%; max-width: 460px;
+  box-shadow: var(--shadow-dialog);
+  animation: modalIn 0.2s ease;
+}
+@keyframes modalIn { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }
+.modal-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 1.5rem; }
+.modal-footer { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; }
+
+/* ---- Empty State ---- */
+.empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); }
+.empty-state-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+.empty-state h3 { font-size: 1.05rem; margin-bottom: 0.5rem; color: var(--text); font-weight: 700; }
+.empty-state p { font-size: 0.88rem; margin-bottom: 1.5rem; }
+
+/* ---- Toast ---- */
+.toast-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 300; display: flex; flex-direction: column; gap: 0.5rem; }
+.toast {
+  padding: 0.7rem 1.2rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 700;
+  background: var(--surface-3);
+  box-shadow: var(--shadow-dialog);
+  animation: slideIn 0.2s ease;
+}
+.toast-success { color: var(--accent); }
+.toast-error   { color: var(--danger); }
+@keyframes slideIn { from { transform:translateX(120%); opacity:0; } to { transform:translateX(0); opacity:1; } }
+
+/* ---- Layout ---- */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+.hidden { display: none !important; }
+.text-muted { color: var(--text-muted); }
+.text-dim   { color: var(--text-dim); }
+.text-sm    { font-size: 0.85rem; }
+.divider    { height: 1px; background: rgba(255,255,255,0.07); margin: 1.5rem 0; }

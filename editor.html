@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>편집 — Flodream</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    html, body { height: 100%; overflow: hidden; }
+
+    /* Top bar */
+    .topbar {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0 1.25rem; height: 56px;
+      background: #000; border-bottom: 1px solid rgba(255,255,255,0.06);
+      flex-shrink: 0;
+    }
+    .topbar-back {
+      color: var(--text-muted); text-decoration: none;
+      font-size: 1rem; padding: 0.3rem 0.6rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      transition: all 0.15s; font-weight: 700;
+    }
+    .topbar-back:hover { color: var(--text); border-color: var(--text); }
+    .topbar-title-input {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: var(--text); font-size: 1rem; font-weight: 700; font-family: inherit; min-width: 0;
+    }
+    .topbar-title-input::placeholder { color: var(--text-dim); font-weight: 400; }
+    .topbar-actions { display: flex; gap: 0.35rem; }
+
+    /* Layout */
+    .editor-layout { display: flex; height: calc(100vh - 56px); overflow: hidden; }
+
+    /* Sidebar */
+    .sidebar {
+      width: 240px; flex-shrink: 0;
+      background: #000;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .sidebar-head {
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .sidebar-lbl {
+      font-size: 0.7rem; font-weight: 700;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px;
+    }
+    .scene-list { flex: 1; overflow-y: auto; padding: 0.5rem; }
+    .scene-item {
+      padding: 0.6rem 0.8rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer; margin-bottom: 0.15rem;
+      transition: background 0.15s;
+    }
+    .scene-item:hover { background: var(--surface-2); }
+    .scene-item.active { background: var(--surface-3); }
+    .scene-item.active .scene-name { color: var(--text); }
+    .sc-row { display: flex; align-items: center; gap: 0.3rem; margin-bottom: 0.2rem; }
+    .sc-num { font-size: 0.65rem; color: var(--text-dim); min-width: 16px; font-weight: 700; }
+    .sc-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .sc-dot-start { background: var(--accent); }
+    .sc-dot-end   { background: var(--danger); }
+    .sc-dot-normal{ background: var(--border); }
+    .scene-name { font-size: 0.82rem; color: var(--text-muted); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .scene-meta { font-size: 0.68rem; color: var(--text-dim); margin-top: 0.1rem; }
+    .sidebar-foot { padding: 0.65rem; border-top: 1px solid rgba(255,255,255,0.06); }
+
+    /* Editor panel */
+    .editor-panel { flex: 1; overflow-y: auto; padding: 2rem 2.5rem; background: var(--bg); }
+    .panel-empty {
+      height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: var(--text-muted); text-align: center; gap: 0.6rem;
+    }
+    .panel-empty-icon { font-size: 2.5rem; opacity: 0.25; margin-bottom: 0.5rem; }
+
+    /* Hint */
+    .hint-bar {
+      background: rgba(30,215,96,0.08);
+      border: 1px solid rgba(30,215,96,0.2);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 1rem; font-size: 0.8rem; color: var(--accent);
+      margin-bottom: 1.75rem;
+    }
+
+    /* Editor sections */
+    .ed-section { margin-bottom: 1.75rem; }
+    .ed-label {
+      font-size: 0.7rem; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 0.65rem;
+    }
+    .content-area {
+      width: 100%; min-height: 200px;
+      background: var(--surface-2); box-shadow: var(--shadow-inset);
+      border: none; border-radius: var(--radius-sm);
+      color: var(--text); font-size: 0.95rem; font-family: 'Noto Sans KR', sans-serif;
+      line-height: 1.85; padding: 1rem; resize: vertical; outline: none;
+      transition: box-shadow 0.15s;
+    }
+    .content-area:focus {
+      box-shadow: rgb(18,18,18) 0px 1px 0px, var(--accent) 0px 0px 0px 1px inset;
+    }
+
+    /* Type toggles */
+    .type-toggles { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .type-toggle {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--surface-2); border-radius: var(--radius-pill);
+      cursor: pointer; transition: all 0.15s;
+      font-size: 0.82rem; font-weight: 700;
+      border: 1px solid transparent; user-select: none;
+    }
+    .type-toggle:hover { border-color: var(--border); }
+    .type-toggle.is-ending { border-color: var(--danger); color: var(--danger); background: rgba(243,114,127,0.08); }
+    .type-toggle.is-start  { border-color: var(--accent); color: var(--accent); background: rgba(30,215,96,0.08); }
+    input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--accent); }
+
+    /* Choices */
+    .choices-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+    .choice-card {
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      padding: 1rem; margin-bottom: 0.5rem;
+    }
+    .choice-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+    .choice-num { font-size: 0.75rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+    .choice-grid { display: grid; grid-template-columns: 1fr auto; gap: 0.6rem; align-items: end; }
+    .choice-grid select { min-width: 145px; }
+    .choice-empty {
+      font-size: 0.8rem; color: var(--text-muted); padding: 0.85rem 1rem;
+      border: 1px dashed rgba(255,255,255,0.1); border-radius: var(--radius-sm);
+      text-align: center; line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="author.html" class="topbar-back">←</a>
+    <input class="topbar-title-input" id="story-title" placeholder="스토리 제목..." oninput="onTitleChange()">
+    <div class="topbar-actions">
+      <button class="btn btn-ghost btn-sm" onclick="saveStory()">저장</button>
+      <button class="btn btn-secondary btn-sm" onclick="previewStory()">미리보기</button>
+      <button class="btn btn-primary btn-sm" id="publish-btn" onclick="togglePublish()">발행</button>
+    </div>
+  </div>
+
+  <div class="editor-layout">
+    <div class="sidebar">
+      <div class="sidebar-head">
+        <span class="sidebar-lbl">장면 목록</span>
+        <span class="badge badge-muted" id="node-count">0</span>
+      </div>
+      <div class="scene-list" id="scene-list"></div>
+      <div class="sidebar-foot">
+        <button class="btn btn-secondary" style="width:100%;justify-content:center" onclick="addNode()">+ 장면 추가</button>
+      </div>
+    </div>
+
+    <div class="editor-panel" id="editor-panel">
+      <div class="panel-empty">
+        <div class="panel-empty-icon">📄</div>
+        <strong>장면을 선택하거나 추가하세요</strong>
+        <span class="text-sm text-muted">왼쪽에서 장면을 클릭하거나<br>+ 장면 추가를 눌러 시작하세요</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+  <script src="app.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const storyId = params.get('id');
+    let story = null;
+    let currentNodeId = null;
+    let dirty = false;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      story = Storage.get(storyId);
+      if (!story) { alert('스토리를 찾을 수 없습니다.'); location.href = 'author.html'; return; }
+      document.getElementById('story-title').value = story.title || '';
+      document.title = story.title + ' — Flodream';
+      updatePublishBtn();
+      renderSidebar();
+      const firstId = story.startNodeId || Object.keys(story.nodes || {})[0];
+      if (firstId) selectNode(firstId);
+    });
+
+    window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+    document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveStory(); } });
+
+    function renderSidebar() {
+      const nodes = story.nodes || {};
+      const ids = Object.keys(nodes);
+      document.getElementById('node-count').textContent = ids.length;
+      const sorted = [...ids].sort((a, b) => {
+        if (nodes[a].isStart) return -1;
+        if (nodes[b].isStart) return 1;
+        return (nodes[a].title || '').localeCompare(nodes[b].title || '');
+      });
+      document.getElementById('scene-list').innerHTML = sorted.length === 0
+        ? '<div class="text-sm text-muted" style="padding:1rem;text-align:center">장면 없음</div>'
+        : sorted.map((id, i) => {
+            const n = nodes[id]; const isActive = id === currentNodeId;
+            const dotCls = n.isStart ? 'sc-dot-start' : n.isEnding ? 'sc-dot-end' : 'sc-dot-normal';
+            return `
+              <div class="scene-item ${isActive ? 'active' : ''}" onclick="selectNode('${id}')">
+                <div class="sc-row">
+                  <span class="sc-num">${i+1}</span>
+                  <span class="sc-dot ${dotCls}"></span>
+                </div>
+                <div class="scene-name">${escapeHtml(n.title || '(제목 없음)')}</div>
+                <div class="scene-meta">${n.isEnding ? '종점' : `선택지 ${(n.choices||[]).length}개`}</div>
+              </div>`;
+          }).join('');
+    }
+
+    function selectNode(id) {
+      persistCurrentNode();
+      currentNodeId = id;
+      renderSidebar();
+      renderEditor();
+    }
+
+    function renderEditor() {
+      const node = story.nodes[currentNodeId];
+      if (!node) return;
+      const allNodes = Object.values(story.nodes);
+      document.getElementById('editor-panel').innerHTML = `
+        <div class="hint-bar">Ctrl+S 로 저장 · 다른 장면 클릭 시 자동 반영</div>
+        <div class="ed-section">
+          <div class="ed-label">장면 이름 (에디터 표시용)</div>
+          <input type="text" id="f-title" value="${escapeAttr(node.title||'')}" placeholder="예: 폐건물 내부" oninput="dirty=true">
+        </div>
+        <div class="ed-section">
+          <div class="ed-label">장면 내용</div>
+          <textarea class="content-area" id="f-content" placeholder="이 장면에서 일어나는 일을 묘사하세요..." oninput="dirty=true">${escapeHtml(node.content||'')}</textarea>
+        </div>
+        <div class="ed-section">
+          <div class="ed-label">장면 유형</div>
+          <div class="type-toggles">
+            <label class="type-toggle ${node.isStart?'is-start':''}">
+              <input type="checkbox" id="f-isstart" ${node.isStart?'checked disabled':''}>
+              <span>시작 장면</span>${node.isStart?'<span class="text-dim text-sm" style="font-weight:400">(고정)</span>':''}
+            </label>
+            <label class="type-toggle ${node.isEnding?'is-ending':''}" id="ending-toggle">
+              <input type="checkbox" id="f-isending" ${node.isEnding?'checked':''} onchange="onEndingToggle()">
+              <span>엔딩 장면</span>
+            </label>
+          </div>
+          <div id="ending-label-wrap" class="${node.isEnding?'':'hidden'}" style="margin-top:0.75rem">
+            <input type="text" id="f-endlabel" value="${escapeAttr(node.endingLabel||'')}" placeholder="엔딩 이름 (예: 진실 엔딩, 생존 엔딩...)" oninput="dirty=true">
+          </div>
+        </div>
+        <div id="choices-section" ${node.isEnding?'style="display:none"':''}>
+          <div class="divider"></div>
+          <div class="choices-header">
+            <div class="ed-label" style="margin:0">선택지 <span style="opacity:0.5;font-weight:400;letter-spacing:0;text-transform:none">(최대 4개)</span></div>
+            <button class="btn btn-secondary btn-sm" id="add-choice-btn" onclick="addChoice()" ${(node.choices||[]).length>=4?'disabled':''}>+ 선택지 추가</button>
+          </div>
+          <div id="choices-list">${renderChoicesList(node, allNodes)}</div>
+          ${(node.choices||[]).length===0?'<div class="choice-empty">선택지가 없으면 스토리가 막혀요.<br>엔딩이라면 "엔딩 장면"으로 표시하거나 선택지를 추가하세요.</div>':''}
+        </div>
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="text-sm text-muted">${(node.choices||[]).filter(c=>c.text&&c.nextNodeId).length} / ${(node.choices||[]).length} 선택지 연결됨</span>
+          ${!node.isStart
+            ?`<button class="btn btn-danger btn-sm" onclick="deleteNode('${node.id}')">장면 삭제</button>`
+            :`<span class="text-sm text-dim">시작 장면은 삭제 불가</span>`}
+        </div>`;
+    }
+
+    function renderChoicesList(node, allNodes) {
+      if (!node.choices || node.choices.length === 0) return '';
+      return node.choices.map((ch, i) => {
+        const opts = allNodes.filter(n => n.id !== node.id)
+          .map(n => `<option value="${n.id}" ${ch.nextNodeId===n.id?'selected':''}>${escapeHtml(n.title||n.id)}</option>`).join('');
+        return `
+          <div class="choice-card">
+            <div class="choice-card-header">
+              <span class="choice-num">선택지 ${i+1}</span>
+              <button class="btn btn-ghost btn-sm" onclick="removeChoice('${ch.id}')" style="letter-spacing:0;font-size:0.8rem">✕ 삭제</button>
+            </div>
+            <div class="form-group">
+              <label>선택지 텍스트</label>
+              <input type="text" value="${escapeAttr(ch.text||'')}" placeholder="독자가 클릭하게 될 문장" onchange="updateChoice('${ch.id}','text',this.value)">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>이동할 장면</label>
+              <select onchange="updateChoice('${ch.id}','nextNodeId',this.value)">
+                <option value="">— 장면 선택 —</option>${opts}
+              </select>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function onEndingToggle() {
+      const isEnding = document.getElementById('f-isending').checked;
+      document.getElementById('ending-toggle').classList.toggle('is-ending', isEnding);
+      document.getElementById('ending-label-wrap').classList.toggle('hidden', !isEnding);
+      const cs = document.getElementById('choices-section');
+      if (cs) cs.style.display = isEnding ? 'none' : '';
+      if (isEnding) story.nodes[currentNodeId].choices = [];
+      dirty = true;
+    }
+
+    function persistCurrentNode() {
+      if (!currentNodeId || !story?.nodes[currentNodeId]) return;
+      const n = story.nodes[currentNodeId];
+      const t = document.getElementById('f-title');
+      const c = document.getElementById('f-content');
+      const e = document.getElementById('f-isending');
+      const el = document.getElementById('f-endlabel');
+      if (t) n.title = t.value;
+      if (c) n.content = c.value;
+      if (e) { n.isEnding = e.checked; if (n.isEnding) n.choices = []; }
+      if (el) n.endingLabel = el.value;
+    }
+
+    function saveStory() {
+      persistCurrentNode();
+      story.title = document.getElementById('story-title').value || story.title;
+      Storage.save(story);
+      dirty = false;
+      showToast('저장되었어요', 'success');
+    }
+
+    function onTitleChange() {
+      story.title = document.getElementById('story-title').value;
+      document.title = story.title + ' — Flodream';
+      dirty = true;
+    }
+
+    function updatePublishBtn() {
+      const btn = document.getElementById('publish-btn');
+      btn.textContent = story.published ? '발행 취소' : '발행';
+      btn.className = story.published ? 'btn btn-ghost btn-sm' : 'btn btn-primary btn-sm';
+    }
+
+    function togglePublish() {
+      saveStory();
+      if (!story.published && Object.keys(story.nodes || {}).length < 2) {
+        showToast('장면이 2개 이상 있어야 발행할 수 있어요', 'error'); return;
+      }
+      story.published = !story.published;
+      Storage.save(story);
+      updatePublishBtn();
+      showToast(story.published ? '발행되었어요' : '발행이 취소되었어요', 'success');
+    }
+
+    function previewStory() { saveStory(); window.open(`play.html?id=${story.id}`, '_blank'); }
+
+    function addNode() {
+      persistCurrentNode();
+      const n = createEmptyNode(false);
+      story.nodes[n.id] = n;
+      currentNodeId = n.id;
+      Storage.save(story);
+      renderSidebar();
+      renderEditor();
+      showToast('새 장면 추가됨', 'success');
+    }
+
+    function deleteNode(nodeId) {
+      if (story.nodes[nodeId]?.isStart) return;
+      if (!confirm('이 장면을 삭제할까요?')) return;
+      Object.values(story.nodes).forEach(n => { n.choices = (n.choices||[]).filter(c => c.nextNodeId !== nodeId); });
+      delete story.nodes[nodeId];
+      currentNodeId = null;
+      Storage.save(story);
+      renderSidebar();
+      const rem = Object.keys(story.nodes);
+      if (rem.length > 0) selectNode(story.startNodeId || rem[0]);
+      else document.getElementById('editor-panel').innerHTML = `<div class="panel-empty"><div class="panel-empty-icon">📄</div><strong>장면을 추가하세요</strong></div>`;
+      showToast('장면 삭제됨', 'success');
+    }
+
+    function addChoice() {
+      const node = story.nodes[currentNodeId];
+      if (!node || (node.choices||[]).length >= 4) { showToast('최대 4개까지 추가할 수 있어요', 'error'); return; }
+      persistCurrentNode();
+      node.choices = node.choices || [];
+      node.choices.push(createEmptyChoice());
+      Storage.save(story);
+      refreshChoices();
+    }
+
+    function removeChoice(choiceId) {
+      const node = story.nodes[currentNodeId];
+      if (!node) return;
+      node.choices = (node.choices||[]).filter(c => c.id !== choiceId);
+      Storage.save(story);
+      refreshChoices();
+    }
+
+    function updateChoice(choiceId, field, value) {
+      const node = story.nodes[currentNodeId];
+      const ch = (node?.choices||[]).find(c => c.id === choiceId);
+      if (ch) { ch[field] = value; Storage.save(story); }
+    }
+
+    function refreshChoices() {
+      const node = story.nodes[currentNodeId];
+      const allNodes = Object.values(story.nodes);
+      const listEl = document.getElementById('choices-list');
+      const addBtn = document.getElementById('add-choice-btn');
+      if (listEl) listEl.innerHTML = renderChoicesList(node, allNodes);
+      if (addBtn) addBtn.disabled = (node.choices||[]).length >= 4;
+      renderSidebar();
+    }
+  </script>
+</body>
+</html>

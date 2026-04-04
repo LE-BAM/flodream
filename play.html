@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>플레이 — Flodream</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    body { background: #000; min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* Header */
+    .play-header {
+      display: flex; align-items: center;
+      padding: 0.85rem 2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(0,0,0,0.9);
+      backdrop-filter: blur(10px);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .play-back {
+      text-decoration: none; color: var(--text-muted);
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border: 1px solid var(--border); border-radius: var(--radius-pill);
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .play-back:hover { color: var(--text); border-color: var(--text); }
+    .play-title { flex: 1; text-align: center; font-size: 0.85rem; color: var(--text-muted); font-weight: 700; padding: 0 1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .play-step  { font-size: 0.72rem; color: var(--text-dim); font-weight: 700; white-space: nowrap; }
+
+    /* Main */
+    .play-main { flex: 1; display: flex; justify-content: center; padding: 4rem 1.5rem 6rem; }
+    .play-content { max-width: 640px; width: 100%; }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;
+      margin-bottom: 2.5rem; padding-bottom: 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      animation: fadeUp 0.4s ease;
+    }
+    .bc-crumb { font-size: 0.7rem; color: var(--text-dim); background: var(--surface); padding: 0.15rem 0.55rem; border-radius: var(--radius-pill); }
+    .bc-now   { font-size: 0.7rem; color: var(--accent); background: rgba(30,215,96,0.12); padding: 0.15rem 0.55rem; border-radius: var(--radius-pill); font-weight: 700; }
+    .bc-arrow { color: var(--text-dim); font-size: 0.6rem; }
+
+    /* Scene text */
+    .scene-text {
+      font-size: 1.08rem; line-height: 2; color: #c8c8dc;
+      white-space: pre-line; margin-bottom: 3rem;
+      animation: fadeUp 0.45s ease;
+      font-weight: 400;
+    }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+    /* Choices */
+    .choices-wrap { animation: fadeUp 0.5s ease 0.12s both; }
+    .choices-lbl {
+      font-size: 0.65rem; color: var(--text-dim);
+      text-transform: uppercase; letter-spacing: 2px; font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+    .choice-btn {
+      display: block; width: 100%;
+      padding: 1rem 1.5rem;
+      background: var(--surface); border: none;
+      border-radius: var(--radius);
+      color: var(--text-muted); font-size: 0.92rem; font-family: inherit;
+      text-align: left; cursor: pointer; line-height: 1.5;
+      transition: all 0.15s; margin-bottom: 0.5rem;
+      font-weight: 400;
+    }
+    .choice-btn:hover {
+      background: var(--surface-3); color: var(--text);
+      transform: translateX(6px);
+      box-shadow: -3px 0 0 var(--accent), var(--shadow-card);
+    }
+    .choice-btn:active { transform: translateX(3px); }
+
+    .no-choice { padding: 1rem; border: 1px dashed rgba(255,255,255,0.1); border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--text-muted); text-align: center; }
+
+    /* Ending */
+    .ending-wrap { text-align: center; animation: fadeUp 0.5s ease; }
+    .ending-stamp {
+      display: inline-block; padding: 0.4rem 1.5rem;
+      background: rgba(30,215,96,0.12); color: var(--accent);
+      border: 1px solid rgba(30,215,96,0.3); border-radius: var(--radius-pill);
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      margin-bottom: 2.5rem;
+    }
+    .ending-text { font-size: 1.05rem; line-height: 2; color: #c8c8dc; white-space: pre-line; margin-bottom: 2.5rem; text-align: left; }
+    .ending-rule { width: 48px; height: 2px; background: var(--accent); margin: 0 auto 2.5rem; border-radius: 1px; }
+    .ending-actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .ending-stats { margin-top: 2rem; font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="play-header">
+    <a href="index.html" class="play-back">← 목록</a>
+    <div class="play-title" id="play-title">불러오는 중...</div>
+    <div class="play-step" id="play-step"></div>
+  </div>
+  <div class="play-main">
+    <div class="play-content" id="play-content">
+      <div style="text-align:center;padding:5rem;color:var(--text-muted)">불러오는 중...</div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    let story = null;
+    let currentNodeId = null;
+    let history = [];
+    let stepNum = 0;
+
+    function init() {
+      initSampleData();
+      story = Storage.get(params.get('id'));
+      if (!story) {
+        document.getElementById('play-content').innerHTML = `
+          <div style="text-align:center;padding:5rem 2rem;color:var(--text-muted)">
+            <div style="font-size:3rem;margin-bottom:1rem;opacity:0.3">😕</div>
+            <h2 style="margin-bottom:0.75rem;font-size:1.1rem">스토리를 찾을 수 없어요</h2>
+            <p style="margin-bottom:1.5rem;font-size:0.88rem">삭제되었거나 잘못된 링크일 수 있어요</p>
+            <a href="index.html" class="btn btn-primary">홈으로</a>
+          </div>`;
+        return;
+      }
+      document.title = story.title + ' — Flodream';
+      document.getElementById('play-title').textContent = story.title;
+      currentNodeId = story.startNodeId || Object.keys(story.nodes)[0];
+      render();
+    }
+
+    function render() {
+      const node = story.nodes[currentNodeId];
+      if (!node) { document.getElementById('play-content').innerHTML = `<p style="color:var(--danger)">장면을 찾을 수 없습니다 (${currentNodeId})</p>`; return; }
+      stepNum++;
+      document.getElementById('play-step').textContent = history.length > 0 ? `${stepNum}번째 장면` : '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      node.isEnding ? renderEnding(node) : renderScene(node);
+    }
+
+    function renderScene(node) {
+      const crumbs = history.slice(-3);
+      const breadcrumbHtml = crumbs.length > 0 ? `
+        <div class="breadcrumb">
+          ${crumbs.map(h => `<span class="bc-crumb">${escapeHtml(h.nodeTitle)}</span><span class="bc-arrow">›</span>`).join('')}
+          <span class="bc-now">현재</span>
+        </div>` : '';
+
+      const choices = (node.choices || []).filter(c => c.text && c.nextNodeId);
+      const choicesHtml = choices.length > 0
+        ? `<div class="choices-wrap">
+            <div class="choices-lbl">Your Choice</div>
+            ${choices.map(c => `<button class="choice-btn" onclick="choose('${c.nextNodeId}','${escapeAttr(c.text)}','${escapeAttr(node.title||'')}')">
+              ${escapeHtml(c.text)}</button>`).join('')}
+           </div>`
+        : `<div class="no-choice">⚠️ 연결된 선택지가 없습니다</div>`;
+
+      document.getElementById('play-content').innerHTML = `
+        ${breadcrumbHtml}
+        <div class="scene-text">${escapeHtml(node.content || '(내용이 없습니다)')}</div>
+        ${choicesHtml}`;
+    }
+
+    function renderEnding(node) {
+      document.getElementById('play-content').innerHTML = `
+        <div class="ending-wrap">
+          <div class="ending-stamp">${escapeHtml(node.endingLabel || 'ENDING')}</div>
+          <div class="ending-text">${escapeHtml(node.content || '')}</div>
+          <div class="ending-rule"></div>
+          <div class="ending-actions">
+            <button class="btn btn-primary btn-lg" onclick="restart()">처음부터</button>
+            <a href="index.html" class="btn btn-ghost btn-lg">다른 스토리</a>
+          </div>
+          <div class="ending-stats">${history.length + 1} Scenes · ${history.length} Choices</div>
+        </div>`;
+    }
+
+    function choose(nextId, choiceText, nodeTitle) {
+      history.push({ nodeId: currentNodeId, nodeTitle, choiceText });
+      currentNodeId = nextId;
+      render();
+    }
+
+    function restart() {
+      history = []; stepNum = 0;
+      currentNodeId = story.startNodeId || Object.keys(story.nodes)[0];
+      render();
+    }
+
+    init();
+  </script>
+</body>
+</html>
