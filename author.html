@@ -7,58 +7,63 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
   <style>
-    .layout { max-width: 880px; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
-
+    .layout { max-width: 880px; margin: 0 auto; padding: 2.5rem 2rem 2rem; }
     .page-header {
       display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
-      margin-bottom: 2rem;
-      padding-bottom: 1.5rem;
+      margin-bottom: 2rem; padding-bottom: 1.5rem;
       border-bottom: 1px solid rgba(255,255,255,0.07);
     }
     .page-title { font-size: 1.5rem; font-weight: 700; }
     .page-sub { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.3rem; font-weight: 400; }
-
-    /* Stats */
     .stats-bar { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.75rem; margin-bottom: 2rem; }
-    .stat-card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 1.25rem;
-      text-align: center;
-      transition: background 0.15s;
-    }
+    .stat-card { background: var(--surface); border-radius: var(--radius); padding: 1.25rem; text-align: center; transition: background 0.15s; }
     .stat-card:hover { background: var(--surface-3); }
-    .stat-num  { font-size: 2rem; font-weight: 700; color: var(--accent); }
-    .stat-lbl  { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
-
-    /* Story list */
-    .story-list { display: flex; flex-direction: column; gap: 0.5rem; }
-    .story-item {
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 1rem 1.25rem;
-      display: flex; align-items: center; gap: 1rem;
-      transition: background 0.15s;
-    }
+    .stat-num { font-size: 2rem; font-weight: 700; color: var(--accent); }
+    .stat-lbl { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+    .story-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 2rem; }
+    .story-item { background: var(--surface); border-radius: var(--radius); padding: 1rem 1.25rem; display: flex; align-items: center; gap: 1rem; transition: background 0.15s; }
     .story-item:hover { background: var(--surface-3); }
-    .story-icon {
-      width: 44px; height: 44px;
-      border-radius: var(--radius-sm);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.35rem;
-      flex-shrink: 0;
-    }
+    .story-icon { width: 44px; height: 44px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; flex-shrink: 0; }
     .story-info { flex: 1; min-width: 0; }
-    .story-item-title {
-      font-weight: 700; font-size: 0.95rem;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      margin-bottom: 0.3rem;
-    }
-    .story-item-meta {
-      display: flex; align-items: center; gap: 0.5rem;
-      font-size: 0.75rem; color: var(--text-muted); flex-wrap: wrap;
-    }
+    .story-item-title { font-weight: 700; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.3rem; }
+    .story-item-meta { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted); flex-wrap: wrap; }
     .story-actions { display: flex; gap: 0.35rem; flex-shrink: 0; }
+
+    /* ===== BOOKSTORE THEATER ===== */
+    .theater-wrap {
+      background: #000;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-bottom: 0;
+    }
+    .theater-header {
+      max-width: 880px; margin: 0 auto;
+      padding: 1.25rem 2rem 0.75rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .theater-title {
+      font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--text-muted);
+    }
+    .theater-live {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.72rem; font-weight: 700; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    .live-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+
+    #bookstore-canvas {
+      display: block;
+      width: 100%;
+      height: 220px;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
   </style>
 </head>
 <body>
@@ -78,36 +83,31 @@
       </div>
       <button class="btn btn-primary" onclick="openCreateModal()">새 스토리</button>
     </div>
-
     <div class="stats-bar" id="stats-bar"></div>
     <div class="story-list" id="story-list"></div>
   </div>
 
-  <!-- Create Modal -->
+  <!-- Bookstore Theater -->
+  <div class="theater-wrap">
+    <div class="theater-header">
+      <span class="theater-title">📚 서재 — 지금 읽고 있는 독자들</span>
+      <span class="theater-live"><span class="live-dot"></span><span id="reader-count">0명 읽는 중</span></span>
+    </div>
+    <canvas id="bookstore-canvas"></canvas>
+  </div>
+
+  <!-- Modals -->
   <div class="modal-overlay hidden" id="create-modal">
     <div class="modal">
       <h2 class="modal-title">새 스토리 만들기</h2>
-      <div class="form-group">
-        <label>제목 *</label>
-        <input type="text" id="inp-title" placeholder="예: 2033, 서울의 잿더미">
-      </div>
-      <div class="form-group">
-        <label>한 줄 소개</label>
-        <input type="text" id="inp-desc" placeholder="독자에게 보여질 짧은 설명">
-      </div>
-      <div class="form-group">
-        <label>작가 이름</label>
-        <input type="text" id="inp-author" placeholder="닉네임">
-      </div>
-      <div class="form-group">
-        <label>장르</label>
+      <div class="form-group"><label>제목 *</label><input type="text" id="inp-title" placeholder="예: 2033, 서울의 잿더미"></div>
+      <div class="form-group"><label>한 줄 소개</label><input type="text" id="inp-desc" placeholder="독자에게 보여질 짧은 설명"></div>
+      <div class="form-group"><label>작가 이름</label><input type="text" id="inp-author" placeholder="닉네임"></div>
+      <div class="form-group"><label>장르</label>
         <select id="inp-genre">
-          <option value="SF">SF</option>
-          <option value="판타지">판타지</option>
-          <option value="로맨스">로맨스</option>
-          <option value="공포">공포</option>
-          <option value="미스터리">미스터리</option>
-          <option value="기타" selected>기타</option>
+          <option value="SF">SF</option><option value="판타지">판타지</option>
+          <option value="로맨스">로맨스</option><option value="공포">공포</option>
+          <option value="미스터리">미스터리</option><option value="기타" selected>기타</option>
         </select>
       </div>
       <div class="modal-footer">
@@ -116,8 +116,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Delete Confirm Modal -->
   <div class="modal-overlay hidden" id="delete-modal">
     <div class="modal">
       <h2 class="modal-title">스토리 삭제</h2>
@@ -133,6 +131,9 @@
   <div id="toast-container" class="toast-container"></div>
   <script src="app.js"></script>
   <script>
+    /* ============================================================
+       DASHBOARD
+    ============================================================ */
     const GENRE_EMOJI = { SF:'🚀', '판타지':'⚔️', '로맨스':'💕', '공포':'👻', '미스터리':'🔍', '기타':'📖' };
     let deleteId = null;
 
@@ -140,24 +141,15 @@
       const stories = Storage.getAll();
       const pub = stories.filter(s => s.published).length;
       const nodes = stories.reduce((s, st) => s + Object.keys(st.nodes || {}).length, 0);
-
       document.getElementById('stats-bar').innerHTML = `
         <div class="stat-card"><div class="stat-num">${stories.length}</div><div class="stat-lbl">전체 스토리</div></div>
         <div class="stat-card"><div class="stat-num">${pub}</div><div class="stat-lbl">발행됨</div></div>
         <div class="stat-card"><div class="stat-num">${nodes}</div><div class="stat-lbl">총 장면</div></div>`;
-
       const list = document.getElementById('story-list');
       if (stories.length === 0) {
-        list.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-state-icon" style="font-size:2.5rem">✍️</div>
-            <h3>아직 작성한 스토리가 없어요</h3>
-            <p>첫 번째 인터랙티브 픽션을 만들어보세요!</p>
-            <button class="btn btn-primary" onclick="openCreateModal()">새 스토리 만들기</button>
-          </div>`;
+        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon" style="font-size:2.5rem">✍️</div><h3>아직 작성한 스토리가 없어요</h3><p>첫 번째 인터랙티브 픽션을 만들어보세요!</p><button class="btn btn-primary" onclick="openCreateModal()">새 스토리 만들기</button></div>`;
         return;
       }
-
       list.innerHTML = stories.map(st => {
         const emoji = GENRE_EMOJI[st.genre] || '📖';
         const nc = Object.keys(st.nodes || {}).length;
@@ -170,74 +162,378 @@
               <div class="story-item-title">${escapeHtml(st.title)}</div>
               <div class="story-item-meta">
                 <span class="badge ${st.published ? 'badge-success' : 'badge-muted'}">${st.published ? '발행됨' : '임시저장'}</span>
-                <span>${nc}개 장면</span>
-                <span>${ec}개 엔딩</span>
-                <span>👁 ${(st.views||0).toLocaleString()}</span>
-                <span>${date}</span>
+                <span>${nc}개 장면</span><span>${ec}개 엔딩</span>
+                <span>👁 ${(st.views||0).toLocaleString()}</span><span>${date}</span>
               </div>
             </div>
             <div class="story-actions">
               <button class="btn btn-ghost btn-sm" onclick="window.open('play.html?id=${st.id}','_blank')">미리보기</button>
               <button class="btn btn-secondary btn-sm" onclick="location.href='editor.html?id=${st.id}'">편집</button>
               <button class="btn ${st.published ? 'btn-ghost' : 'btn-success'} btn-sm" onclick="togglePublish('${st.id}')">
-                ${st.published ? '발행 취소' : '발행'}
-              </button>
+                ${st.published ? '발행 취소' : '발행'}</button>
               <button class="btn btn-danger btn-sm" onclick="openDeleteModal('${st.id}')">삭제</button>
             </div>
           </div>`;
       }).join('');
     }
 
-    function openCreateModal() {
-      document.getElementById('create-modal').classList.remove('hidden');
-      setTimeout(() => document.getElementById('inp-title').focus(), 50);
-    }
-    function closeCreateModal() {
-      document.getElementById('create-modal').classList.add('hidden');
-      ['inp-title','inp-desc','inp-author'].forEach(id => document.getElementById(id).value = '');
-    }
+    function openCreateModal() { document.getElementById('create-modal').classList.remove('hidden'); setTimeout(() => document.getElementById('inp-title').focus(), 50); }
+    function closeCreateModal() { document.getElementById('create-modal').classList.add('hidden'); ['inp-title','inp-desc','inp-author'].forEach(id => document.getElementById(id).value = ''); }
     function createStory() {
       const title = document.getElementById('inp-title').value.trim();
       if (!title) { showToast('제목을 입력해주세요', 'error'); return; }
-      const story = createEmptyStory(
-        title,
-        document.getElementById('inp-desc').value.trim(),
-        document.getElementById('inp-author').value.trim() || '익명',
-        document.getElementById('inp-genre').value
-      );
-      Storage.save(story);
-      location.href = `editor.html?id=${story.id}`;
+      const story = createEmptyStory(title, document.getElementById('inp-desc').value.trim(), document.getElementById('inp-author').value.trim() || '익명', document.getElementById('inp-genre').value);
+      Storage.save(story); location.href = `editor.html?id=${story.id}`;
     }
     function togglePublish(id) {
-      const st = Storage.get(id);
-      if (!st) return;
-      if (!st.published && Object.keys(st.nodes || {}).length < 2) {
-        showToast('장면이 2개 이상 있어야 발행할 수 있어요', 'error'); return;
-      }
-      st.published = !st.published;
-      Storage.save(st);
-      showToast(st.published ? '발행되었어요' : '발행이 취소되었어요', 'success');
-      render();
+      const st = Storage.get(id); if (!st) return;
+      if (!st.published && Object.keys(st.nodes || {}).length < 2) { showToast('장면이 2개 이상 있어야 발행할 수 있어요', 'error'); return; }
+      st.published = !st.published; Storage.save(st);
+      showToast(st.published ? '발행되었어요' : '발행이 취소되었어요', 'success'); render();
     }
-    function openDeleteModal(id) {
-      deleteId = id;
-      document.getElementById('delete-title').textContent = Storage.get(id)?.title || '';
-      document.getElementById('delete-modal').classList.remove('hidden');
-    }
+    function openDeleteModal(id) { deleteId = id; document.getElementById('delete-title').textContent = Storage.get(id)?.title || ''; document.getElementById('delete-modal').classList.remove('hidden'); }
     function closeDeleteModal() { document.getElementById('delete-modal').classList.add('hidden'); deleteId = null; }
-    function confirmDelete() {
-      if (!deleteId) return;
-      Storage.delete(deleteId);
-      closeDeleteModal();
-      showToast('삭제되었어요', 'success');
-      render();
-    }
-
+    function confirmDelete() { if (!deleteId) return; Storage.delete(deleteId); closeDeleteModal(); showToast('삭제되었어요', 'success'); render(); }
     document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeCreateModal(); closeDeleteModal(); } });
     document.getElementById('inp-title')?.addEventListener('keydown', e => { if (e.key === 'Enter') createStory(); });
 
+    /* ============================================================
+       BOOKSTORE THEATER
+    ============================================================ */
+    const Theater = {
+      canvas: null,
+      ctx: null,
+      W: 0,
+      H: 220,
+      FLOOR: 165,
+      SHELF_W: 52,
+      chars: [],
+      frame: 0,
+      S: 3,          // sprite scale: 1 game-px = 3 canvas-px
+      SPR_W: 13,     // sprite width in game-px
+      SPR_H: 19,     // sprite height in game-px
+
+      HEAD_COLORS: ['#6DC12B','#3B82F6','#EC4899','#F59E0B','#8B5CF6','#14B8A6','#EF4444','#06B6D4'],
+
+      init() {
+        this.canvas = document.getElementById('bookstore-canvas');
+        if (!this.canvas) return;
+        this.ctx = this.canvas.getContext('2d');
+        this.resize();
+        window.addEventListener('resize', () => { this.resize(); this.buildChars(); });
+        this.buildChars();
+        this.loop();
+      },
+
+      resize() {
+        this.W = this.canvas.offsetWidth;
+        this.canvas.width  = this.W;
+        this.canvas.height = this.H;
+      },
+
+      buildChars() {
+        this.chars = [];
+        const stories = Storage.getAll().filter(s => s.published);
+        const minX = this.SHELF_W + 10;
+        const maxX = this.W - this.SHELF_W - this.SPR_W * this.S - 10;
+        const groundY = this.FLOOR - this.SPR_H * this.S;
+
+        stories.forEach((story, si) => {
+          const count = Math.min(Math.floor((story.views || 0) / 2) + 1, 3);
+          for (let i = 0; i < count && this.chars.length < 10; i++) {
+            const x = minX + Math.random() * Math.max(0, maxX - minX);
+            this.chars.push({
+              x,
+              y: groundY,
+              vx: (Math.random() - 0.5) * 0.7,
+              state: Math.random() < 0.35 ? 'reading' : 'walking',
+              timer: 90 + Math.random() * 180,
+              flipped: Math.random() < 0.5,
+              label: story.title.length > 9 ? story.title.slice(0, 9) + '…' : story.title,
+              hc: this.HEAD_COLORS[si % this.HEAD_COLORS.length],
+              coverColor: story.coverColor,
+            });
+          }
+        });
+
+        const el = document.getElementById('reader-count');
+        if (el) el.textContent = `${this.chars.length}명 읽는 중`;
+      },
+
+      update() {
+        const minX = this.SHELF_W + 4;
+        const maxX = this.W - this.SHELF_W - this.SPR_W * this.S - 4;
+        this.chars.forEach(ch => {
+          ch.timer--;
+          if (ch.timer <= 0) {
+            if (ch.state === 'reading') {
+              ch.state = 'walking';
+              ch.vx = (Math.random() - 0.5) * 0.9;
+              ch.timer = 80 + Math.random() * 120;
+            } else {
+              ch.state = 'reading';
+              ch.vx = 0;
+              ch.timer = 100 + Math.random() * 200;
+            }
+          }
+          if (ch.state === 'walking') {
+            ch.x += ch.vx;
+            if (ch.vx > 0) ch.flipped = false;
+            if (ch.vx < 0) ch.flipped = true;
+            if (ch.x < minX) { ch.vx = Math.abs(ch.vx) * (0.6 + Math.random() * 0.6); ch.flipped = false; }
+            if (ch.x > maxX) { ch.vx = -Math.abs(ch.vx) * (0.6 + Math.random() * 0.6); ch.flipped = true; }
+          }
+        });
+        this.frame++;
+      },
+
+      draw() {
+        const { ctx, W, H } = this;
+        ctx.clearRect(0, 0, W, H);
+        this.drawBG();
+        this.chars.forEach(ch => this.drawChar(ch));
+      },
+
+      /* ---- BACKGROUND ---- */
+      drawBG() {
+        const { ctx, W, H, FLOOR, SHELF_W } = this;
+
+        // Ceiling
+        ctx.fillStyle = '#0e0b18';
+        ctx.fillRect(0, 0, W, 22);
+
+        // Wall (gradient)
+        const wg = ctx.createLinearGradient(0, 22, 0, FLOOR);
+        wg.addColorStop(0, '#1a1230');
+        wg.addColorStop(1, '#130e25');
+        ctx.fillStyle = wg;
+        ctx.fillRect(0, 22, W, FLOOR - 22);
+
+        // Subtle horizontal wall grain
+        ctx.fillStyle = 'rgba(255,255,255,0.025)';
+        for (let y = 28; y < FLOOR; y += 10) ctx.fillRect(SHELF_W, y, W - SHELF_W * 2, 1);
+
+        // Floor planks
+        for (let x = 0; x < W; x += 28) {
+          ctx.fillStyle = (Math.floor(x / 28) % 2 === 0) ? '#2e1c10' : '#3a2415';
+          ctx.fillRect(x, FLOOR, 28, H - FLOOR);
+          ctx.fillStyle = '#1e0e08';
+          ctx.fillRect(x, FLOOR, 1, H - FLOOR);
+        }
+        ctx.fillStyle = '#5a3820';
+        ctx.fillRect(0, FLOOR, W, 2);
+
+        // Hanging lamp
+        this.drawLamp(W / 2, 0);
+
+        // Left shelf
+        this.drawShelf(0, 22, SHELF_W, FLOOR - 22, 0);
+        // Right shelf
+        this.drawShelf(W - SHELF_W, 22, SHELF_W, FLOOR - 22, 1);
+
+        // Ceiling molding
+        ctx.fillStyle = '#2a1f40';
+        ctx.fillRect(0, 20, W, 3);
+      },
+
+      drawShelf(x, y, w, h, seed) {
+        const { ctx } = this;
+        const BOOKS = ['#e74c3c','#3498db','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#e91e63','#00bcd4','#ff5722','#607d8b','#ff8a65','#26c6da','#ab47bc'];
+
+        // Dark wood back
+        ctx.fillStyle = '#1a0d06';
+        ctx.fillRect(x, y, w, h);
+        // Wood grain
+        for (let wy = y; wy < y + h; wy += 5) {
+          ctx.fillStyle = 'rgba(255,255,255,0.03)';
+          ctx.fillRect(x, wy, w, 1);
+        }
+
+        const SHELVES = 4;
+        const spacing = h / SHELVES;
+        let ci = seed * 5;
+
+        for (let i = 0; i < SHELVES; i++) {
+          const boardY = y + (i + 1) * spacing - 5;
+          // Books
+          let bx = x + 3;
+          while (bx < x + w - 4) {
+            const bw = 4 + (ci % 3);
+            const bh = 15 + (ci % 14);
+            ctx.fillStyle = BOOKS[ci % BOOKS.length];
+            ctx.fillRect(bx, boardY - bh, bw, bh);
+            ctx.fillStyle = 'rgba(0,0,0,0.35)';
+            ctx.fillRect(bx, boardY - bh, 1, bh);
+            ctx.fillStyle = 'rgba(255,255,255,0.18)';
+            ctx.fillRect(bx + 1, boardY - bh + 3, bw - 2, 1);
+            bx += bw + 1;
+            ci += 3;
+          }
+          // Shelf board
+          ctx.fillStyle = '#5c3822';
+          ctx.fillRect(x, boardY, w, 5);
+          ctx.fillStyle = '#7a5030';
+          ctx.fillRect(x, boardY, w, 2);
+        }
+
+        // Frame
+        ctx.strokeStyle = '#8b5e3c';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, w, h);
+      },
+
+      drawLamp(cx, topY) {
+        const { ctx } = this;
+        // Glow
+        const g = ctx.createRadialGradient(cx, topY + 35, 0, cx, topY + 35, 110);
+        g.addColorStop(0, 'rgba(255,210,80,0.13)');
+        g.addColorStop(1, 'rgba(255,210,80,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(cx - 110, topY, 220, 170);
+        // Cord
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(cx, topY); ctx.lineTo(cx, topY + 14); ctx.stroke();
+        // Shade
+        ctx.fillStyle = '#b8920e';
+        ctx.beginPath();
+        ctx.moveTo(cx - 24, topY + 14); ctx.lineTo(cx + 24, topY + 14);
+        ctx.lineTo(cx + 15, topY + 32); ctx.lineTo(cx - 15, topY + 32);
+        ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = '#8a6c08'; ctx.lineWidth = 1; ctx.stroke();
+        // Inner highlight
+        ctx.fillStyle = '#d4a820';
+        ctx.fillRect(cx - 20, topY + 14, 40, 3);
+        // Bulb
+        ctx.fillStyle = 'rgba(255,235,100,0.95)';
+        ctx.beginPath(); ctx.arc(cx, topY + 30, 4, 0, Math.PI * 2); ctx.fill();
+      },
+
+      /* ---- PIXEL ROBOT CHARACTER ---- */
+      drawChar(ch) {
+        const { ctx, S, frame } = this;
+        const x = Math.round(ch.x);
+        const y = Math.round(ch.y);
+        const HC  = ch.hc;       // head main color
+        const HCL = this.lighten(HC);
+        const happy = ch.state === 'reading';
+        const walkF = Math.floor(frame / 7) % 2;
+
+        ctx.save();
+        // Flip horizontally around character center
+        if (ch.flipped) {
+          ctx.translate(x + this.SPR_W * S, 0);
+          ctx.scale(-1, 1);
+        }
+        const ox = ch.flipped ? 0 : x; // after flip, origin shifts
+
+        // Helper: fill in game-pixel coords relative to (ox, y)
+        const p = (gx, gy, gw, gh, color) => {
+          ctx.fillStyle = color;
+          ctx.fillRect(ox + gx * S, y + gy * S, gw * S, gh * S);
+        };
+
+        // === HEAD (13px wide, 9px tall) ===
+        // Headphone ears
+        p(-1, 2, 2, 4, '#808080');
+        p(12, 2, 2, 4, '#808080');
+        p(-1, 3, 1, 2, '#555');
+        p(13, 3, 1, 2, '#555');
+        // Head outline box
+        p(1,  0, 11, 1, '#222');  // top
+        p(0,  1,  1, 7, '#222');  // left
+        p(12, 1,  1, 7, '#222');  // right
+        p(1,  8, 11, 1, '#222');  // bottom
+        // Head fill
+        p(1, 1, 11, 7, HC);
+        // Highlight top
+        p(2, 1, 9, 3, HCL);
+
+        // Eyes
+        if (happy) {
+          // Closed arc eyes
+          p(2, 5, 3, 1, '#222');
+          p(8, 5, 3, 1, '#222');
+          // Blush cheeks
+          p(2, 6, 2, 1, '#FF91A4');
+          p(9, 6, 2, 1, '#FF91A4');
+        } else {
+          // Open eyes
+          p(2, 4, 3, 2, '#fff');
+          p(8, 4, 3, 2, '#fff');
+          p(3, 4, 1, 1, '#222');
+          p(9, 4, 1, 1, '#222');
+        }
+
+        // === BODY (9px wide, 6px tall, starts at y=10) ===
+        p(2,  9,  9, 1, '#333');   // connector
+        p(2, 10,  9, 1, '#222');   // top
+        p(1, 11,  1, 4, '#222');   // left
+        p(11,11,  1, 4, '#222');   // right
+        p(2, 15,  9, 1, '#222');   // bottom
+        p(2, 11,  9, 4, '#CDCDCD');
+        p(3, 11,  4, 2, '#E8E8E8'); // highlight
+
+        // === ARMS (animated) ===
+        const aY = ch.state === 'walking' ? (walkF === 0 ? 12 : 11) : 12;
+        p(-1, aY,       3, 2, '#222');    // left arm outline
+        p( 0, aY,       2, 1, '#BBBBBB');
+        p(11, 14 - aY + 12, 3, 2, '#222'); // right arm (opposite phase)
+        p(12, 14 - aY + 12, 1, 1, '#BBBBBB');
+
+        // === LEGS (animated) ===
+        const lL = ch.state === 'walking' ? (walkF === 0 ? 1 : 0) : 0;
+        const lR = 1 - lL;
+        // Left leg
+        p(3, 16,     2, 4, '#222');
+        p(3, 16+lL,  1, 3, '#BBBBBB');
+        // Right leg
+        p(8, 16,     2, 4, '#222');
+        p(8, 16+lR,  1, 3, '#BBBBBB');
+
+        // === BOOK (if reading) ===
+        if (happy) {
+          p(-3, 11, 3, 4, '#7B3F00');  // cover
+          p(-2, 11, 2, 3, '#FFF8DC');  // pages
+          p(-2, 13, 2, 1, '#aaa');     // text line
+        }
+
+        ctx.restore();
+
+        // === LABEL (always upright) ===
+        ctx.font = 'bold 9px "Courier New", monospace';
+        ctx.textAlign = 'center';
+        const lw = ctx.measureText(ch.label).width;
+        const lx = x + (this.SPR_W * S) / 2;
+        const ly = y - 4;
+        ctx.fillStyle = 'rgba(0,0,0,0.75)';
+        ctx.fillRect(lx - lw / 2 - 4, ly - 13, lw + 8, 13);
+        ctx.fillStyle = ch.hc;
+        ctx.fillText(ch.label, lx, ly - 3);
+      },
+
+      lighten(hex) {
+        // Lighten a hex color by ~30%
+        const n = parseInt(hex.slice(1), 16);
+        const r = Math.min(255, ((n >> 16) & 0xff) + 60);
+        const g = Math.min(255, ((n >>  8) & 0xff) + 60);
+        const b = Math.min(255, ((n >>  0) & 0xff) + 60);
+        return `rgb(${r},${g},${b})`;
+      },
+
+      loop() {
+        this.update();
+        this.draw();
+        requestAnimationFrame(() => this.loop());
+      }
+    };
+
+    /* ============================================================
+       INIT
+    ============================================================ */
     initSampleData();
     render();
+    Theater.init();
   </script>
 </body>
 </html>
