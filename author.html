@@ -71,7 +71,7 @@
       top: 27%;
       bottom: 25%;
       left: 8%;
-      right: 31%;
+      right: 5%;          /* 헤더와 동일한 right */
       overflow-y: auto;
       overflow-x: hidden;
       display: flex;
@@ -80,42 +80,57 @@
     }
     .story-overlay::-webkit-scrollbar { display: none; }
 
-    /* ── 스토리 행 — 이미지 1행 높이에 맞춰 고정 (4행 균등) ── */
+    /* ── 스토리 행 — 헤더와 동일한 grid: 13% 1fr 22% ── */
     .story-row {
-      display: flex;
+      display: grid;
+      grid-template-columns: 13% 1fr 22%;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0 0.75rem 0 0.4rem;
-      height: 25%;        /* overlay 4등분 = 이미지 행 1개 높이 */
+      height: 25%;
       flex-shrink: 0;
       background: transparent;
+      padding: 0;
+    }
+
+    /* 상태 셀 */
+    .status-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     /* 상태 뱃지 */
     .status-badge {
       display: inline-flex; align-items: center; gap: 0.25rem;
-      padding: 0.22rem 0.6rem; border-radius: 999px;
-      font-size: 0.7rem; font-weight: 700; white-space: nowrap;
+      padding: 0.22rem 0.55rem; border-radius: 999px;
+      font-size: clamp(0.58rem, 1vw, 0.75rem); font-weight: 700; white-space: nowrap;
     }
     .st-pub     { background: #d4f0e0; color: #1e7a4a; border: 1.5px solid #74c69d; }
     .st-writing { background: #ede0f8; color: #6a2c8a; border: 1.5px solid #b48acc; }
     .st-private { background: #fde8c8; color: #8B5E3C; border: 1.5px solid #c8a87a; }
 
-    /* 제목 */
+    /* 제목 셀 */
     .title-cell {
-      flex: 1;
-      font-size: 0.9rem; font-weight: 700;
+      display: flex;
+      align-items: center;
+      padding: 0 0.5rem;
+      font-size: clamp(0.7rem, 1.1vw, 0.95rem);
+      font-weight: 600;
       color: #3d2b1f;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       min-width: 0;
     }
 
-    /* 액션 버튼 */
-    .action-btns { display: flex; gap: 0.28rem; flex-shrink: 0; }
+    /* 편집 셀 */
+    .action-btns {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+    }
     .action-btn {
-      padding: 0.22rem 0.6rem;
+      padding: 0.2rem 0.5rem;
       border-radius: 999px;
-      font-size: 0.68rem; font-weight: 700;
+      font-size: clamp(0.55rem, 0.9vw, 0.72rem); font-weight: 700;
       font-family: 'Pretendard', sans-serif;
       cursor: pointer; border: 1.5px solid;
       white-space: nowrap; transition: all 0.12s;
@@ -308,9 +323,11 @@
           : `<button class="action-btn ab-pub"   onclick="togglePublish('${st.id}')">🚀 공개</button>`;
         return `
           <div class="story-row">
-            <span class="status-badge ${s.cls}" style="flex-shrink:0">${s.icon} ${s.label}</span>
+            <div class="status-cell">
+              <span class="status-badge ${s.cls}">${s.icon} ${s.label}</span>
+            </div>
             <div class="title-cell" title="${escapeHtml(st.title)}">${escapeHtml(st.title)}</div>
-            <div class="action-btns" style="flex-shrink:0">
+            <div class="action-btns">
               <button class="action-btn ab-edit" onclick="location.href='editor.html?id=${st.id}'">✏️ 수정</button>
               ${pubBtn}
               <button class="action-btn ab-del" onclick="openDeleteModal('${st.id}')">🗑</button>
