@@ -201,7 +201,7 @@
         <h3>내 이야기 관리</h3>
         <p>발행, 편집, 조회수 확인</p>
       </a>
-      <a href="#stories" class="feat-card">
+      <a href="author.html" class="feat-card">
         <span class="feat-icon">📚</span>
         <h3>이야기 읽기</h3>
         <p>분기형 텍스트 어드벤처를<br>탐험해보세요</p>
@@ -209,31 +209,6 @@
     </div>
   </div>
 
-  <!-- Stories -->
-  <section class="section" id="stories">
-    <div class="container">
-      <div class="section-inner">
-      <div class="section-header">
-        <h2 class="section-title">📚 책방 컬렉션</h2>
-        <span id="story-count" class="text-muted text-sm"></span>
-      </div>
-      <div class="filter-row">
-        <button class="filter-btn active" data-sort="views">조회수순</button>
-        <button class="filter-btn" data-sort="newest">최신순</button>
-        <div class="filter-sep"></div>
-        <button class="filter-btn genre-btn active" data-genre="all">전체</button>
-        <button class="filter-btn genre-btn" data-genre="SF">SF</button>
-        <button class="filter-btn genre-btn" data-genre="판타지">판타지</button>
-        <button class="filter-btn genre-btn" data-genre="로맨스">로맨스</button>
-        <button class="filter-btn genre-btn" data-genre="공포">공포</button>
-        <button class="filter-btn genre-btn" data-genre="미스터리">미스터리</button>
-        <button class="filter-btn genre-btn" data-genre="기타">기타</button>
-      </div>
-      <div class="stories-grid" id="stories-grid"></div>
-      <div class="stats-row" id="stats-row"></div>
-      </div><!-- /.section-inner -->
-    </div>
-  </section>
 
   <div id="toast-container" class="toast-container"></div>
   <script src="app.js"></script>
@@ -280,79 +255,8 @@
       p(3,21,3,1,'#4a2a10'); p(6,21,3,1,'#4a2a10');
     }
 
-    /* ===== STORY BROWSER ===== */
-    const GENRE_EMOJI = { SF:'🚀', '판타지':'⚔️', '로맨스':'💕', '공포':'👻', '미스터리':'🔍', '기타':'📖' };
-    let currentGenre = 'all', currentSort = 'views';
-
-    function renderStories() {
-      let filtered = Storage.getAll().filter(s => s.published);
-      if (currentGenre !== 'all') filtered = filtered.filter(s => s.genre === currentGenre);
-      filtered = currentSort === 'views'
-        ? [...filtered].sort((a,b) => (b.views||0)-(a.views||0))
-        : [...filtered].sort((a,b) => b.createdAt - a.createdAt);
-      document.getElementById('story-count').textContent = `${filtered.length}개의 이야기`;
-
-      const rankMap = {};
-      const groups = {};
-      filtered.forEach(s => { if (!groups[s.genre]) groups[s.genre]=[]; groups[s.genre].push(s); });
-      Object.values(groups).forEach(g => g.sort((a,b)=>(b.views||0)-(a.views||0)).forEach((s,i) => rankMap[s.id]=i+1));
-
-      const grid = document.getElementById('stories-grid');
-      if (!filtered.length) {
-        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">📭</div><h3>아직 공개된 이야기가 없어요</h3><p>첫 번째 이야기를 작성해보세요!</p><a href="author.html" class="btn btn-primary">이야기 쓰기</a></div>`;
-        return;
-      }
-
-      grid.innerHTML = filtered.map(story => {
-        const emoji = GENRE_EMOJI[story.genre]||'📖';
-        const nc = Object.keys(story.nodes||{}).length;
-        const ec = Object.values(story.nodes||{}).filter(n=>n.isEnding).length;
-        const gr = rankMap[story.id];
-        const rankBadge = gr<=3 ? `<div class="rank-badge rank-${gr}">${gr}</div>` : '';
-        return `
-          <div class="story-card" onclick="location.href='play.html?id=${story.id}'">
-            <div class="story-cover" style="background:linear-gradient(145deg,${story.coverColor}50,${story.coverColor}20);position:relative">
-              ${rankBadge}<span style="position:relative;z-index:1">${emoji}</span>
-            </div>
-            <div class="story-body">
-              <div class="story-meta">
-                <span class="badge badge-muted">${story.genre}</span>
-                <span class="text-sm text-dim">${nc}장면 · ${ec}엔딩</span>
-              </div>
-              <h3 class="story-title">${escapeHtml(story.title)}</h3>
-              <p class="story-desc">${escapeHtml(story.description)}</p>
-              <div class="story-footer">
-                <span class="story-author">👁 ${(story.views||0).toLocaleString()} · ${escapeHtml(story.author)}</span>
-                <button class="play-circle" onclick="event.stopPropagation();location.href='play.html?id=${story.id}'">▶</button>
-              </div>
-            </div>
-          </div>`;
-      }).join('');
-
-      const all = Storage.getAll();
-      document.getElementById('stats-row').innerHTML = `
-        <div><div class="stat-num">${all.filter(s=>s.published).length}</div><div class="stat-lbl">공개 이야기</div></div>
-        <div><div class="stat-num">${all.reduce((s,st)=>s+(st.views||0),0).toLocaleString()}</div><div class="stat-lbl">총 조회수</div></div>
-        <div><div class="stat-num">${all.reduce((s,st)=>s+Object.keys(st.nodes||{}).length,0)}</div><div class="stat-lbl">총 장면</div></div>`;
-    }
-
-    // Filter events
-    document.querySelector('.filter-row').addEventListener('click', e => {
-      const btn = e.target.closest('.filter-btn'); if (!btn) return;
-      if (btn.dataset.sort) {
-        document.querySelectorAll('[data-sort]').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active'); currentSort = btn.dataset.sort;
-      }
-      if (btn.dataset.genre !== undefined) {
-        document.querySelectorAll('[data-genre]').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active'); currentGenre = btn.dataset.genre;
-      }
-      renderStories();
-    });
-
     initSampleData();
     drawCharacter();
-    renderStories();
   </script>
 </body>
 </html>
