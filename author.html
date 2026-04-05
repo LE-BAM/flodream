@@ -42,9 +42,30 @@
       box-shadow: 0 20px 60px rgba(0,0,0,0.7);
     }
 
+    /* ── 컬럼 헤더 오버레이 (이미지 다크 헤더 행 위에 텍스트만) ── */
+    .col-header-overlay {
+      position: absolute;
+      top: 22.5%;
+      bottom: 73%;
+      left: 8%;
+      right: 5%;
+      display: grid;
+      grid-template-columns: 13% 1fr 22%;
+      align-items: center;
+      pointer-events: none;
+    }
+    .col-header-overlay span {
+      font-family: 'Pretendard', sans-serif;
+      font-size: clamp(0.65rem, 1.2vw, 1rem);
+      font-weight: 600;
+      color: #F0D19D;
+      text-align: center;
+      letter-spacing: 0.04em;
+    }
+    .col-header-overlay span:nth-child(2) { text-align: center; }
+    .col-header-overlay span:nth-child(3) { text-align: center; }
+
     /* ── 스토리 목록 오버레이 ── */
-    /* Too.png 이미지 row 영역 픽셀 분석 기반 (4096x2286):
-       rows top ~620px=27%, bottom ~1710px=75%, left ~330px=8%, right ~2870px=70% */
     .story-overlay {
       position: absolute;
       top: 27%;
@@ -206,6 +227,13 @@
       <!-- Tool 이미지 (전체 패널 비주얼) -->
       <img src="Realtool.png" class="panel-img" alt=""
            onerror="this.onerror=null; this.src='Too.png';">
+
+      <!-- 컬럼 헤더 오버레이 -->
+      <div class="col-header-overlay">
+        <span>상태</span>
+        <span>제목</span>
+        <span>편집</span>
+      </div>
 
       <!-- 스토리 목록 동적 오버레이 -->
       <div class="story-overlay" id="story-overlay"></div>
