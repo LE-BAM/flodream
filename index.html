@@ -11,7 +11,11 @@
     body {
       background: url('bookstore.png') center top / cover fixed;
       background-color: #3a2410;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
     }
+    body > * { flex-shrink: 0; }
+    .feat-section { flex: 1; }
 
     /* ---- Responsive background ---- */
     /* 모바일: fixed attachment가 iOS에서 깨지므로 scroll로 전환 */
