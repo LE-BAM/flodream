@@ -16,15 +16,19 @@
       padding: 2rem 1rem;
     }
 
-    /* ── 패널 래퍼 (Tool.png 비율 유지) ── */
+    /* ── 패널 래퍼 ── */
     .panel-wrap {
       position: relative;
       width: 100%;
       max-width: 960px;
-      /* 2752 : 1536 = 16 : ~8.95 ≈ aspect-ratio 2752/1536 */
-      aspect-ratio: 2752 / 1536;
-      background: url('Tool.png') no-repeat center / 100% 100%;
       filter: drop-shadow(0 16px 48px rgba(0,0,0,0.75));
+    }
+    .panel-img {
+      display: block;
+      width: 100%;
+      height: auto;
+      pointer-events: none;
+      user-select: none;
     }
 
     /* ── 스토리 목록 오버레이 (rows 영역) ── */
@@ -172,6 +176,9 @@
 <body>
 
   <div class="panel-wrap">
+    <!-- 배경 이미지 -->
+    <img src="Tool.png" class="panel-img" alt="패널 배경">
+
     <!-- 스토리 목록 동적 영역 -->
     <div class="story-overlay" id="story-overlay"></div>
 
