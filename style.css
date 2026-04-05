@@ -47,27 +47,54 @@ body {
 
 /* ---- Navbar ---- */
 .navbar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 2rem; height: 62px;
+  display: flex; align-items: center; gap: 1.5rem;
+  padding: 0 2rem; height: 66px;
   background: #fdf5e4;
   border-bottom: 2px solid var(--border);
   position: sticky; top: 0; z-index: 100;
   box-shadow: rgba(80,40,10,0.08) 0px 2px 8px;
 }
 .navbar-brand {
-  font-size: 1.2rem; font-weight: 700; color: var(--accent);
-  text-decoration: none; font-family: Georgia, 'Times New Roman', serif;
-  letter-spacing: -0.3px;
+  font-size: 1.25rem; font-weight: 800; color: var(--text);
+  text-decoration: none; font-family: 'Pretendard', Georgia, serif;
+  letter-spacing: -0.5px; white-space: nowrap; flex-shrink: 0;
 }
-.navbar-nav { display: flex; gap: 0.2rem; list-style: none; }
+.navbar-nav { display: flex; gap: 0.2rem; list-style: none; flex: 1; }
 .navbar-nav a {
   text-decoration: none; color: var(--text-muted);
-  padding: 0.4rem 1rem; border-radius: var(--radius-sm);
+  padding: 0.4rem 1rem; border-radius: var(--radius-pill);
   font-size: 0.9rem; font-weight: 700; transition: all 0.15s;
 }
-.navbar-nav a:hover, .navbar-nav a.active {
-  color: var(--accent); background: var(--accent-light);
+.navbar-nav a:hover { color: var(--text-muted); background: var(--surface-2); }
+.navbar-nav a.active {
+  color: #fdf5e4; background: var(--text); border-radius: var(--radius-pill);
 }
+
+/* Navbar search */
+.navbar-search {
+  display: flex; align-items: center;
+  background: var(--surface-2); border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill); padding: 0.3rem 0.85rem;
+  gap: 0.4rem; flex-shrink: 0;
+}
+.navbar-search input {
+  border: none; background: transparent; outline: none;
+  font-size: 0.85rem; font-family: inherit; color: var(--text);
+  width: 130px;
+}
+.navbar-search input::placeholder { color: var(--text-dim); }
+.navbar-search-icon { color: var(--text-dim); font-size: 0.85rem; }
+
+/* Navbar right user area */
+.navbar-right { display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+.navbar-username { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); }
+.navbar-logout {
+  font-size: 0.8rem; font-weight: 700; color: var(--text-muted);
+  background: var(--surface-2); border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill); padding: 0.3rem 0.9rem;
+  cursor: pointer; font-family: inherit; transition: all 0.15s;
+}
+.navbar-logout:hover { color: var(--accent); border-color: var(--accent); }
 
 /* ---- Buttons ---- */
 .btn {
