@@ -11,145 +11,219 @@
       background-color: #3a2410;
       min-height: 100vh;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1rem;
+      flex-direction: column;
+    }
+    @media (max-width: 768px) {
+      body { background-attachment: scroll; }
     }
 
-    /* ── 패널 래퍼 ── */
+    /* ──────────── 페이지 메인 ──────────── */
+    .author-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 1rem 3rem;
+    }
+
+    /* ──────────── 패널 래퍼 (character 포함) ──────────── */
     .panel-wrap {
       position: relative;
       width: 100%;
-      max-width: 960px;
-      filter: drop-shadow(0 16px 48px rgba(0,0,0,0.75));
+      max-width: 740px;
     }
-    .panel-img {
+
+    /* ── 캐릭터 + 말풍선 ── */
+    .char-area {
+      position: absolute;
+      right: -20px;
+      top: -120px;
+      width: 180px;
+      z-index: 10;
+      pointer-events: none;
+    }
+    .char-bubble {
+      position: absolute;
+      bottom: 105%;
+      right: 40%;
+      width: 195px;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
+    }
+    .char-img {
       display: block;
       width: 100%;
-      height: auto;
-      pointer-events: none;
-      user-select: none;
+      filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.4));
     }
 
-    /* ── 스토리 목록 오버레이 (rows 영역) ── */
-    .story-overlay {
-      position: absolute;
-      top: 22%;
-      left: 7%;
-      right: 7%;
-      bottom: 20%;
-      overflow-y: auto;
-      overflow-x: hidden;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(139,94,60,0.4) transparent;
+    /* ──────────── 나무 패널 ──────────── */
+    .panel {
+      border-radius: 14px;
+      border: 5px solid #4a2808;
+      box-shadow:
+        0 0 0 2px #c8902a,
+        0 0 0 5px #4a2808,
+        0 20px 60px rgba(0,0,0,0.65),
+        inset 0 1px 0 rgba(255,220,120,0.2);
+      overflow: hidden;
+      background: #f5e6c8;
     }
-    .story-overlay::-webkit-scrollbar { width: 4px; }
-    .story-overlay::-webkit-scrollbar-thumb { background: rgba(139,94,60,0.35); border-radius: 2px; }
 
-    /* ── 스토리 행 ── */
+    /* ── 헤더 (갈색 배너) ── */
+    .panel-header {
+      background: linear-gradient(180deg, #7a4820 0%, #5a3010 100%);
+      border-bottom: 3px solid #3d1f08;
+      padding: 0.95rem 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .panel-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #f5deb3;
+      font-family: 'Pretendard', Georgia, serif;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+      letter-spacing: -0.3px;
+    }
+    .panel-header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .btn-new {
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      padding: 0.38rem 1rem;
+      background: #c8902a;
+      border: 2px solid #f0b84a;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 0.8rem; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .btn-new:hover { background: #a87020; }
+    .btn-close-x {
+      width: 28px; height: 28px;
+      background: rgba(139,32,32,0.8);
+      border: 2px solid #c04040;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 0.85rem; font-weight: 800;
+      cursor: pointer; font-family: inherit;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .btn-close-x:hover { background: #8b2020; }
+
+    /* ── 컬럼 헤더 ── */
+    .col-head {
+      display: grid;
+      grid-template-columns: 120px 1fr 210px;
+      background: #5a3010;
+      padding: 0.55rem 1.25rem;
+      gap: 0.75rem;
+      border-bottom: 2px solid #3d1f08;
+    }
+    .col-head span {
+      font-size: 0.76rem; font-weight: 800;
+      color: #f0d090; letter-spacing: 0.08em;
+      text-align: center;
+    }
+    .col-head span:nth-child(2) { text-align: left; padding-left: 0.25rem; }
+
+    /* ── 스토리 목록 ── */
+    .story-list { background: #f5e6c8; }
     .story-row {
       display: grid;
-      grid-template-columns: 80px 1fr auto;
+      grid-template-columns: 120px 1fr 210px;
+      padding: 0.75rem 1.25rem;
+      gap: 0.75rem;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0 0.75rem;
-      min-height: 54px;
-      border-bottom: 1px solid rgba(200,168,120,0.25);
+      border-bottom: 1px solid #d9c09a;
       transition: background 0.12s;
     }
-    .story-row:nth-child(odd)  { background: rgba(240,221,176,0.75); }
-    .story-row:nth-child(even) { background: rgba(253,245,228,0.75); }
-    .story-row:hover           { background: rgba(232,210,144,0.88); }
+    .story-row:nth-child(odd)  { background: #fdf5e4; }
+    .story-row:nth-child(even) { background: #f0ddb0; }
+    .story-row:hover           { background: #e8cc90; }
     .story-row:last-child      { border-bottom: none; }
 
-    /* 상태 배지 */
+    /* 상태 뱃지 */
+    .status-wrap { display: flex; align-items: center; justify-content: center; }
     .status-badge {
-      display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem;
-      padding: 0.2rem 0.55rem; border-radius: 999px;
-      font-size: 0.68rem; font-weight: 700; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      padding: 0.28rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.73rem; font-weight: 700;
+      white-space: nowrap;
     }
-    .status-public   { background: #d4f0e0; color: #1e7a4a; border: 1px solid #74c69d; }
-    .status-writing  { background: #e8d5f5; color: #6a2c8a; border: 1px solid #b48acc; }
-    .status-private  { background: #fde8c8; color: #8B5E3C; border: 1px solid #c8a87a; }
+    .st-pub     { background: #d4f0e0; color: #1e7a4a; border: 1.5px solid #74c69d; }
+    .st-writing { background: #e8d5f5; color: #6a2c8a; border: 1.5px solid #b48acc; }
+    .st-private { background: #fde8c8; color: #8B5E3C; border: 1.5px solid #c8a87a; }
 
     /* 제목 */
-    .story-title-cell {
-      font-size: 0.88rem; font-weight: 700;
+    .title-cell {
+      font-size: 0.93rem; font-weight: 700;
       color: #3d2b1f; font-family: 'Pretendard', serif;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
     /* 액션 버튼 */
-    .action-btns { display: flex; gap: 0.3rem; flex-shrink: 0; }
+    .action-btns { display: flex; gap: 0.32rem; justify-content: center; }
     .action-btn {
-      padding: 0.22rem 0.6rem; border-radius: 999px;
-      font-size: 0.68rem; font-weight: 700;
+      padding: 0.3rem 0.68rem;
+      border-radius: 999px;
+      font-size: 0.73rem; font-weight: 700;
       font-family: 'Pretendard', sans-serif;
-      cursor: pointer; border: 1.5px solid; white-space: nowrap;
+      cursor: pointer; border: 1.5px solid;
+      white-space: nowrap;
       transition: all 0.12s;
     }
-    .ab-edit    { background: rgba(139,94,60,0.08); color: #8B5E3C; border-color: rgba(139,94,60,0.3); }
-    .ab-edit:hover { background: #8B5E3C; color: #fff; }
-    .ab-pub     { background: rgba(93,138,60,0.08); color: #5d8a3c; border-color: rgba(93,138,60,0.3); }
-    .ab-pub:hover { background: #5d8a3c; color: #fff; }
-    .ab-unpub   { background: rgba(139,94,60,0.08); color: #8B5E3C; border-color: rgba(139,94,60,0.3); }
-    .ab-unpub:hover { background: #8B5E3C; color: #fff; }
-    .ab-del     { background: rgba(192,64,64,0.08); color: #c04040; border-color: rgba(192,64,64,0.25); }
-    .ab-del:hover { background: #c04040; color: #fff; }
+    .ab-edit    { background: rgba(139,94,60,0.09); color: #7a4820; border-color: #c8a87a; }
+    .ab-edit:hover { background: #7a4820; color: #fff; border-color: #7a4820; }
+    .ab-pub     { background: rgba(93,138,60,0.09); color: #2d6a4f; border-color: #74c69d; }
+    .ab-pub:hover { background: #2d6a4f; color: #fff; border-color: #2d6a4f; }
+    .ab-unpub   { background: rgba(139,94,60,0.09); color: #7a4820; border-color: #c8a87a; }
+    .ab-unpub:hover { background: #7a4820; color: #fff; }
+    .ab-del     { background: rgba(192,64,64,0.08); color: #a03030; border-color: #e07070; }
+    .ab-del:hover { background: #a03030; color: #fff; border-color: #a03030; }
 
     /* 빈 상태 */
-    .empty-overlay {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      height: 100%; gap: 0.4rem;
-      color: rgba(90,48,16,0.45); font-size: 0.8rem; font-weight: 600;
+    .empty-row {
+      padding: 3rem 2rem; text-align: center;
+      background: #fdf5e4; color: #a08060;
     }
-    .empty-overlay span { font-size: 2rem; }
+    .empty-row .icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+    .empty-row p { font-size: 0.88rem; margin-bottom: 1.25rem; }
 
-    /* ── 새 이야기 버튼 (패널 우상단 부근 오버레이) ── */
-    .btn-new-story {
-      position: absolute;
-      top: 7%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(200,144,42,0.92);
-      border: 2px solid #f0b84a;
-      color: #fff; font-size: 0.78rem; font-weight: 700;
-      padding: 0.28rem 1rem; border-radius: 999px;
-      cursor: pointer; font-family: 'Pretendard', sans-serif;
-      white-space: nowrap; z-index: 5;
-      transition: background 0.15s;
+    /* ── 푸터 (닫기 버튼) ── */
+    .panel-footer {
+      background: linear-gradient(0deg, #4a2808 0%, #5a3010 100%);
+      border-top: 3px solid #3d1f08;
+      padding: 0.85rem 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .btn-new-story:hover { background: rgba(168,112,32,0.95); }
-
-    /* ── X 닫기 버튼 (이미지 우상단 X 위치에 투명 클릭 영역) ── */
-    .btn-x {
-      position: absolute;
-      top: 1.5%;
-      right: 3%;
-      width: 6.5%;
-      height: 12%;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      z-index: 5;
+    .footer-stats { display: flex; gap: 1.5rem; }
+    .footer-stat { text-align: center; }
+    .footer-stat-num { font-size: 1.15rem; font-weight: 800; color: #f5deb3; }
+    .footer-stat-lbl { font-size: 0.63rem; color: #c8a060; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; }
+    .btn-닫기 {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.45rem 1.3rem;
+      background: #3a1808; border: 2px solid #8b5e3c;
+      border-radius: 999px;
+      color: #f5deb3; font-size: 0.84rem; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+      transition: all 0.15s; text-decoration: none;
     }
+    .btn-닫기:hover { background: #2e1208; border-color: #c8902a; }
 
-    /* ── 닫기 버튼 (이미지 하단 닫기 배너 위 투명 클릭 영역) ── */
-    .btn-close-bottom {
-      position: absolute;
-      bottom: 2%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 16%;
-      height: 12%;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      z-index: 5;
-    }
-
-    /* ── 모달 ── */
+    /* ──────────── 모달 ──────────── */
     .modal-overlay {
       display: none; position: fixed; inset: 0;
       background: rgba(0,0,0,0.65);
@@ -160,36 +234,82 @@
     .modal-box {
       background: #fdf5e4; border-radius: 14px;
       border: 2.5px solid #c8a87a;
-      padding: 1.75rem; width: 90%; max-width: 440px;
+      padding: 1.75rem; width: 90%; max-width: 460px;
       box-shadow: 0 8px 40px rgba(0,0,0,0.45);
+      animation: modalIn 0.18s ease;
     }
+    @keyframes modalIn { from { opacity:0; transform:scale(0.96) translateY(-6px); } to { opacity:1; transform:scale(1) translateY(0); } }
     .modal-box h2 { font-size: 1.1rem; font-weight: 800; color: #3d2b1f; margin-bottom: 1.1rem; font-family: 'Pretendard', serif; }
     .modal-footer { display: flex; gap: 0.6rem; justify-content: flex-end; margin-top: 1.1rem; }
 
     @media (max-width: 640px) {
       .panel-wrap { max-width: 100%; }
-      .story-row { grid-template-columns: 60px 1fr auto; min-height: 40px; }
-      .action-btn { font-size: 0.6rem; padding: 0.18rem 0.45rem; }
+      .char-area  { display: none; }
+      .col-head   { grid-template-columns: 90px 1fr 160px; }
+      .story-row  { grid-template-columns: 90px 1fr 160px; padding: 0.6rem 0.9rem; }
+      .action-btn { font-size: 0.65rem; padding: 0.24rem 0.5rem; }
     }
   </style>
 </head>
 <body>
 
-  <div class="panel-wrap">
-    <!-- 배경 이미지 -->
-    <img src="Tool.png" class="panel-img" alt="패널 배경">
+  <!-- ── 내비게이션 바 ── -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-brand">📚 동네서점</a>
+    <ul class="navbar-nav">
+      <li><a href="index.html">홈</a></li>
+      <li><a href="author.html" class="active">내 이야기</a></li>
+      <li><a href="index.html#stories">스토리 찾기</a></li>
+    </ul>
+    <div class="navbar-search">
+      <span class="navbar-search-icon">🔍</span>
+      <input type="text" placeholder="스토리 검색...">
+    </div>
+    <div class="navbar-right">
+      <span class="navbar-username">작가님</span>
+      <button class="navbar-logout">로그아웃</button>
+    </div>
+  </nav>
 
-    <!-- 스토리 목록 동적 영역 -->
-    <div class="story-overlay" id="story-overlay"></div>
+  <!-- ── 메인 ── -->
+  <div class="author-main">
+    <div class="panel-wrap">
 
-    <!-- 새 이야기 버튼 -->
-    <button class="btn-new-story" onclick="openCreateModal()">✏️ 새 이야기</button>
+      <!-- 캐릭터 + 말풍선 -->
+      <div class="char-area">
+        <img src="bubble.png" class="char-bubble" alt="">
+        <img src="owner.png"  class="char-img"    alt="점장님">
+      </div>
 
-    <!-- X 닫기 (이미지 우상단 X 위에 투명 클릭 영역) -->
-    <button class="btn-x" onclick="location.href='index.html'" title="닫기"></button>
+      <!-- 나무 패널 -->
+      <div class="panel">
 
-    <!-- 닫기 (이미지 하단 닫기 배너 위 투명 클릭 영역) -->
-    <button class="btn-close-bottom" onclick="location.href='index.html'" title="닫기"></button>
+        <!-- 헤더 -->
+        <div class="panel-header">
+          <div class="panel-title">📚 내 이야기 관리</div>
+          <div class="panel-header-right">
+            <button class="btn-new" onclick="openCreateModal()">✏️ 새 이야기</button>
+            <a href="index.html" class="btn-close-x" title="홈으로">✕</a>
+          </div>
+        </div>
+
+        <!-- 컬럼 헤더 -->
+        <div class="col-head">
+          <span>상태</span>
+          <span>제목</span>
+          <span>작용</span>
+        </div>
+
+        <!-- 스토리 목록 -->
+        <div class="story-list" id="story-list"></div>
+
+        <!-- 푸터 -->
+        <div class="panel-footer">
+          <div class="footer-stats" id="footer-stats"></div>
+          <a href="index.html" class="btn-닫기">✕ 닫기</a>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- 새 이야기 모달 -->
@@ -217,8 +337,8 @@
   <div class="modal-overlay" id="delete-modal">
     <div class="modal-box">
       <h2>🗑 스토리 삭제</h2>
-      <p style="color:#7a5c3e;font-size:0.88rem">삭제하면 복구할 수 없어요. 정말 삭제하시겠어요?</p>
-      <p id="delete-title-txt" style="margin-top:0.6rem;font-weight:700;font-size:0.92rem;color:#3d2b1f"></p>
+      <p style="color:#7a5c3e;font-size:0.88rem;margin-bottom:0.5rem">삭제하면 복구할 수 없어요. 정말 삭제하시겠어요?</p>
+      <p id="delete-title-txt" style="font-weight:700;font-size:0.95rem;color:#3d2b1f"></p>
       <div class="modal-footer">
         <button class="btn btn-ghost btn-sm" onclick="closeDeleteModal()">취소</button>
         <button class="btn btn-danger btn-sm" onclick="confirmDelete()">삭제</button>
@@ -232,27 +352,41 @@
     let deleteId = null;
 
     function getStatus(st) {
-      if (st.published) return { label: '공개', cls: 'status-public', icon: '✅' };
-      if (Object.keys(st.nodes || {}).length > 0) return { label: '작성 중', cls: 'status-writing', icon: '✍️' };
-      return { label: '비공개', cls: 'status-private', icon: '🔒' };
+      if (st.published) return { label: '공개', cls: 'st-pub', icon: '✅' };
+      if (Object.keys(st.nodes || {}).length > 0) return { label: '작성 중', cls: 'st-writing', icon: '✍️' };
+      return { label: '비공개', cls: 'st-private', icon: '🔒' };
     }
 
     function render() {
       const stories = Storage.getAll();
-      const el = document.getElementById('story-overlay');
+      const pub   = stories.filter(s => s.published).length;
+      const nodes = stories.reduce((a, s) => a + Object.keys(s.nodes || {}).length, 0);
+
+      document.getElementById('footer-stats').innerHTML = `
+        <div class="footer-stat"><div class="footer-stat-num">${stories.length}</div><div class="footer-stat-lbl">전체</div></div>
+        <div class="footer-stat"><div class="footer-stat-num">${pub}</div><div class="footer-stat-lbl">공개</div></div>
+        <div class="footer-stat"><div class="footer-stat-num">${nodes}</div><div class="footer-stat-lbl">총 장면</div></div>`;
+
+      const list = document.getElementById('story-list');
       if (!stories.length) {
-        el.innerHTML = `<div class="empty-overlay"><span>📖</span><p>아직 이야기가 없어요</p></div>`;
+        list.innerHTML = `
+          <div class="empty-row">
+            <div class="icon">✍️</div>
+            <p>아직 작성한 이야기가 없어요.<br>새 이야기 버튼을 눌러 시작해보세요!</p>
+            <button class="btn btn-primary btn-sm" onclick="openCreateModal()">✏️ 새 이야기 만들기</button>
+          </div>`;
         return;
       }
-      el.innerHTML = stories.map(st => {
+
+      list.innerHTML = stories.map(st => {
         const s = getStatus(st);
         const pubBtn = st.published
           ? `<button class="action-btn ab-unpub" onclick="togglePublish('${st.id}')">🔒 비공개</button>`
           : `<button class="action-btn ab-pub"   onclick="togglePublish('${st.id}')">🚀 공개</button>`;
         return `
           <div class="story-row">
-            <div><span class="status-badge ${s.cls}">${s.icon} ${s.label}</span></div>
-            <div class="story-title-cell" title="${escapeHtml(st.title)}">${escapeHtml(st.title)}</div>
+            <div class="status-wrap"><span class="status-badge ${s.cls}">${s.icon} ${s.label}</span></div>
+            <div class="title-cell" title="${escapeHtml(st.title)}">${escapeHtml(st.title)}</div>
             <div class="action-btns">
               <button class="action-btn ab-edit" onclick="location.href='editor.html?id=${st.id}'">✏️ 수정</button>
               ${pubBtn}
