@@ -42,61 +42,75 @@
       box-shadow: 0 20px 60px rgba(0,0,0,0.7);
     }
 
-    /* ── 컬럼 헤더 오버레이 (이미지 다크 헤더 행 위에 텍스트만) ── */
-    .col-header-overlay {
+    /* ── 컬럼 헤더 — 각각 독립 위치 ── */
+    .ch-label {
       position: absolute;
-      top: 22.5%;
-      bottom: 73%;
-      left: 8%;
-      right: 5%;
-      display: grid;
-      grid-template-columns: 13% 1fr 22%;
-      align-items: center;
       pointer-events: none;
-    }
-    .col-header-overlay span {
       font-family: 'Pretendard', sans-serif;
-      font-size: clamp(0.65rem, 1.2vw, 1rem);
+      font-size: clamp(0.75rem, 1.2vw, 1rem);
       font-weight: 600;
       color: #F0D19D;
-      text-align: center;
       letter-spacing: 0.04em;
+      transform: translateY(-50%);  /* top 기준 수직 중앙 */
     }
-    .col-header-overlay span:nth-child(2) { text-align: center; }
-    .col-header-overlay span:nth-child(3) { text-align: center; }
+    /* "상태" */
+    .ch-status {
+      top: 30.2%;
+      left: 31.2%;
+    }
+    /* "제목" */
+    .ch-title {
+      top: 30.2%;
+      left: 47.9%;
+    }
+    /* "편집" */
+    .ch-edit {
+      top: 30.2%;
+      right: 29.2%;
+    }
 
-    /* ── 스토리 목록 오버레이 ── */
-    .story-overlay {
+    /* ────────────────────────────────
+       각 컬럼 오버레이 — 독립적으로 위치 조정 가능
+    ──────────────────────────────── */
+
+    /* 공통: 오버레이 컬럼들 */
+    .col-overlay {
       position: absolute;
-      top: 27%;
+      top: 2.4%;
       bottom: 25%;
-      left: 8%;
-      right: 5%;          /* 헤더와 동일한 right */
-      overflow-y: auto;
-      overflow-x: hidden;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      scrollbar-width: none;
     }
-    .story-overlay::-webkit-scrollbar { display: none; }
-
-    /* ── 스토리 행 — 헤더와 동일한 grid: 13% 1fr 22% ── */
-    .story-row {
-      display: grid;
-      grid-template-columns: 13% 1fr 22%;
-      align-items: center;
-      height: 25%;
-      flex-shrink: 0;
-      background: transparent;
-      padding: 0;
-    }
-
-    /* 상태 셀 */
-    .status-cell {
+    /* 각 셀(행) 높이 = overlay 4등분 */
+    .col-overlay > div {
+      flex: 1;
       display: flex;
       align-items: center;
-      justify-content: center;
+      background: transparent;
     }
+
+    /* ── 상태 컬럼 ── */
+    .col-status {
+      left: 26.1%;
+      width: 12%;
+      justify-items: center;
+    }
+    .col-status > div { justify-content: center; }
+
+    /* ── 제목 컬럼 ── */
+    .col-title {
+      left: 43.8%;
+      right: 28%;
+    }
+    .col-title > div { padding: 0 0.4rem; }
+
+    /* ── 편집(버튼) 컬럼 ── */
+    .col-edit {
+      right: 19%;
+      width: 22%;
+    }
+    .col-edit > div { justify-content: center; gap: 0.25rem; }
 
     /* 상태 뱃지 */
     .status-badge {
@@ -157,8 +171,8 @@
     /* ── 새 이야기 버튼 (이미지 우측 타이틀 영역 근처) ── */
     .btn-new {
       position: absolute;
-      top: 17%;
-      left: 55%;
+      top: 21%;
+      left: 22%;
       background: rgba(200,144,42,0.92);
       border: 2px solid #f0b84a;
       color: #fff; font-size: 0.75rem; font-weight: 700;
@@ -243,15 +257,17 @@
       <img src="Realtool.png" class="panel-img" alt=""
            onerror="this.onerror=null; this.src='Too.png';">
 
-      <!-- 컬럼 헤더 오버레이 -->
-      <div class="col-header-overlay">
-        <span>상태</span>
-        <span>제목</span>
-        <span>편집</span>
-      </div>
+      <!-- 컬럼 헤더 — 각각 독립 위치 -->
+      <span class="ch-label ch-status">상태</span>
+      <span class="ch-label ch-title">제목</span>
+      <span class="ch-label ch-edit">편집</span>
 
-      <!-- 스토리 목록 동적 오버레이 -->
-      <div class="story-overlay" id="story-overlay"></div>
+      <!-- 상태 컬럼 -->
+      <div class="col-overlay col-status" id="col-status"></div>
+      <!-- 제목 컬럼 -->
+      <div class="col-overlay col-title" id="col-title"></div>
+      <!-- 편집 컬럼 -->
+      <div class="col-overlay col-edit" id="col-edit"></div>
 
       <!-- 새 이야기 버튼 -->
       <button class="btn-new" onclick="openCreateModal()">✏️ 새 이야기</button>
@@ -311,28 +327,38 @@
 
     function render() {
       const stories = Storage.getAll();
-      const el = document.getElementById('story-overlay');
+      const elStatus = document.getElementById('col-status');
+      const elTitle  = document.getElementById('col-title');
+      const elEdit   = document.getElementById('col-edit');
+
       if (!stories.length) {
-        el.innerHTML = `<div class="empty-overlay"><span>📖</span><p>아직 이야기가 없어요</p></div>`;
+        elStatus.innerHTML = '';
+        elTitle.innerHTML  = `<div style="justify-content:center;color:rgba(90,48,16,0.4);font-size:0.8rem;font-weight:600;padding:0.5rem">아직 이야기가 없어요</div>`;
+        elEdit.innerHTML   = '';
         return;
       }
-      el.innerHTML = stories.map(st => {
+
+      elStatus.innerHTML = stories.map(st => {
         const s = getStatus(st);
+        return `<div><span class="status-badge ${s.cls}">${s.icon} ${s.label}</span></div>`;
+      }).join('');
+
+      elTitle.innerHTML = stories.map(st =>
+        `<div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+                     font-size:clamp(0.7rem,1.1vw,0.95rem);font-weight:600;color:#3d2b1f;
+                     padding:0 0.4rem;min-width:0"
+              title="${escapeHtml(st.title)}">${escapeHtml(st.title)}</div>`
+      ).join('');
+
+      elEdit.innerHTML = stories.map(st => {
         const pubBtn = st.published
           ? `<button class="action-btn ab-unpub" onclick="togglePublish('${st.id}')">🔒 비공개</button>`
           : `<button class="action-btn ab-pub"   onclick="togglePublish('${st.id}')">🚀 공개</button>`;
-        return `
-          <div class="story-row">
-            <div class="status-cell">
-              <span class="status-badge ${s.cls}">${s.icon} ${s.label}</span>
-            </div>
-            <div class="title-cell" title="${escapeHtml(st.title)}">${escapeHtml(st.title)}</div>
-            <div class="action-btns">
-              <button class="action-btn ab-edit" onclick="location.href='editor.html?id=${st.id}'">✏️ 수정</button>
-              ${pubBtn}
-              <button class="action-btn ab-del" onclick="openDeleteModal('${st.id}')">🗑</button>
-            </div>
-          </div>`;
+        return `<div>
+          <button class="action-btn ab-edit" onclick="location.href='editor.html?id=${st.id}'">✏️ 수정</button>
+          ${pubBtn}
+          <button class="action-btn ab-del" onclick="openDeleteModal('${st.id}')">🗑</button>
+        </div>`;
       }).join('');
     }
 
