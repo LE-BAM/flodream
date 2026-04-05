@@ -13,6 +13,38 @@
       background-color: #3a2410;
     }
 
+    /* ---- Responsive background ---- */
+    /* 모바일: fixed attachment가 iOS에서 깨지므로 scroll로 전환 */
+    @media (max-width: 768px) {
+      body {
+        background-attachment: scroll;
+        background-position: center top;
+        background-size: cover;
+      }
+      .hero-wrap {
+        height: auto;
+        min-height: 320px;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 2rem 5%;
+        gap: 1.5rem;
+      }
+      .hero-char { margin-right: 0; }
+      .speech-bubble { white-space: normal; max-width: 180px; font-size: 0.75rem; }
+      .hero-text { max-width: 100%; padding: 1.25rem 1.5rem; }
+      .hero-text h1 { font-size: 1.25rem; }
+      .feat-grid { grid-template-columns: 1fr; max-width: 400px; }
+      .stories-grid { grid-template-columns: 1fr 1fr; }
+      .navbar { padding: 0 1rem !important; }
+      .navbar-nav a { padding: 0.4rem 0.65rem; font-size: 0.82rem; }
+    }
+
+    @media (max-width: 480px) {
+      .stories-grid { grid-template-columns: 1fr; }
+      .hero-text h1 { font-size: 1.1rem; }
+      .stats-row { gap: 1.25rem; flex-wrap: wrap; }
+    }
+
     /* Navbar — glassy warm overlay */
     .navbar {
       background: rgba(253,245,228,0.82) !important;
