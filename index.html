@@ -25,36 +25,46 @@
         background-size: cover;
       }
 
-      /* 네비바 */
-      .navbar { padding: 0 1rem !important; gap: 0.5rem; height: 54px; }
-      .navbar-search, .navbar-right, .navbar-username { display: none; }
+      /* 네비바: 검색/유저 완전히 숨김 */
+      .navbar {
+        padding: 0 1rem !important;
+        gap: 0.75rem;
+        height: 54px;
+        justify-content: flex-start;
+      }
+      .navbar-search { display: none !important; }
+      .navbar-right { display: none !important; }
       .navbar-brand { font-size: 1rem; }
-      .navbar-nav a { padding: 0.35rem 0.65rem; font-size: 0.82rem; }
+      .navbar-nav { flex: 0; }
+      .navbar-nav a { padding: 0.35rem 0.7rem; font-size: 0.85rem; }
 
-      /* 히어로: 텍스트 2줄 */
-      .hero-wrap { padding: 2rem 1.25rem 0; }
-      .hero-text { padding: 1rem; }
+      /* 히어로: 2줄로 */
+      .hero-wrap { padding: 1.5rem 1.25rem 0; }
+      .hero-text { padding: 0.75rem 0.5rem; }
       .hero-text::before { display: none; }
       .hero-text h1 {
-        font-size: 1.35rem;
+        font-size: clamp(0.95rem, 4.5vw, 1.2rem);
         word-break: keep-all;
-        line-height: 1.5;
+        overflow-wrap: break-word;
+        line-height: 1.55;
+        white-space: normal;
       }
 
       /* 소셜 로그인 */
-      .social-login { padding: 1.25rem 1rem; }
-      .social-btn { width: 100%; max-width: 320px; font-size: 0.9rem; }
+      .social-login { padding: 1rem 1.5rem; }
+      .social-btn { width: 100%; max-width: 300px; font-size: 0.88rem; padding: 0.7rem 1rem; }
 
-      /* 카드: 세로 1열, 크게 */
+      /* 카드: 세로 1열 꽉 차게 */
       .feat-char { display: none; }
       .feat-area { padding: 0 1rem; max-width: 100%; }
-      .feat-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .feat-grid { grid-template-columns: 1fr; gap: 0.85rem; }
       .feat-card { min-height: auto; }
       .feat-card-img img { width: 100%; height: auto; border-radius: var(--radius); }
     }
 
-    @media (max-width: 480px) {
-      .hero-text h1 { font-size: 1.15rem; }
+    @media (max-width: 390px) {
+      .hero-text h1 { font-size: clamp(0.85rem, 4vw, 1rem); }
+      .social-btn { font-size: 0.82rem; }
     }
 
     /* Navbar — glassy warm overlay */
