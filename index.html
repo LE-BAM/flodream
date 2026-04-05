@@ -90,7 +90,16 @@
     .feat-section {
       background: transparent;
       padding: 2.5rem 0 3rem;
+      position: relative;
     }
+    .feat-section::before {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 60%;
+      background: linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 100%);
+      pointer-events: none; z-index: 0;
+    }
+    .feat-area { position: relative; z-index: 1; }
     /* feat-area: 카드들은 정중앙, 캐릭터는 절대 위치로 왼쪽에 겹침 */
     .feat-area {
       position: relative;
