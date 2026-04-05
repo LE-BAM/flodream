@@ -61,6 +61,16 @@
     }
     .hero-text {
       text-align: center;
+      position: relative;
+      padding: 2.5rem 3rem;
+    }
+    .hero-text::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0.5) 0%, transparent 75%);
+      border-radius: 50%;
+      z-index: -1;
+      pointer-events: none;
     }
     .hero-text h1 {
       font-family: 'Pretendard', sans-serif; font-size: 3rem; font-weight: 800; line-height: 1.35;
