@@ -101,10 +101,10 @@
 
     /* ── 제목 컬럼 ── */
     .col-title {
-      left: 43.8%;
+      left: 25.8%;
       right: 28%;
     }
-    .col-title > div { padding: 0 0.4rem; }
+    .col-title > div { padding: 0 0.4rem; justify-content: center; }
 
     /* ── 편집(버튼) 컬럼 ── */
     .col-edit {
@@ -348,7 +348,7 @@
       elTitle.innerHTML = stories.map(st =>
         `<div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
                      font-size:clamp(0.7rem,1.1vw,0.95rem);font-weight:600;color:#3d2b1f;
-                     padding:0 0.4rem;min-width:0"
+                     padding:0 0.4rem;min-width:0;width:100%;text-align:center;"
               title="${escapeHtml(st.title)}">${escapeHtml(st.title)}</div>`
       ).join('');
 
