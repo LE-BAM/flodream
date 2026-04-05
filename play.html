@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>플레이 — Flodream</title>
+  <title>플레이 — 동네서점</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
   <style>
@@ -127,7 +127,7 @@
           </div>`;
         return;
       }
-      document.title = story.title + ' — Flodream';
+      document.title = story.title + ' — 동네서점';
       document.getElementById('play-title').textContent = story.title;
       Storage.incrementViews(story.id);
       currentNodeId = story.startNodeId || Object.keys(story.nodes)[0];
