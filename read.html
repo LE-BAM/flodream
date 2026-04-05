@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이야기 읽기 — 동네서점</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: url('bookstore.png') center top / cover fixed;
+      background-color: #3a2410;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    @media (max-width: 768px) { body { background-attachment: scroll; } }
+
+    .read-main {
+      flex: 1;
+      padding: 2.5rem 2rem 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── 페이지 타이틀 ── */
+    .read-title {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .read-title h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #f5deb3;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+      font-family: 'Pretendard', Georgia, serif;
+      letter-spacing: -0.5px;
+    }
+    .read-title p {
+      margin-top: 0.4rem;
+      font-size: 0.88rem;
+      color: rgba(245,222,179,0.6);
+    }
+
+    /* ── 장르 탭 ── */
+    .genre-tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .genre-tab {
+      padding: 0.4rem 1.1rem;
+      border-radius: 999px;
+      border: 1.5px solid rgba(200,168,120,0.4);
+      background: rgba(253,245,228,0.12);
+      color: rgba(245,222,179,0.7);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'Pretendard', sans-serif;
+      transition: all 0.15s;
+    }
+    .genre-tab:hover {
+      background: rgba(253,245,228,0.22);
+      color: #f5deb3;
+      border-color: rgba(200,168,120,0.7);
+    }
+    .genre-tab.active {
+      background: #c8902a;
+      color: #fff;
+      border-color: #f0b84a;
+    }
+
+    /* ── 장르 섹션 ── */
+    .genre-section { margin-bottom: 2.5rem; }
+    .genre-section.hidden { display: none; }
+
+    .genre-label {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+    .genre-label-text {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #f5deb3;
+      font-family: 'Pretendard', Georgia, serif;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+    }
+    .genre-label-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(200,144,42,0.5), transparent);
+    }
+    .genre-count {
+      font-size: 0.72rem;
+      color: rgba(245,222,179,0.5);
+      font-weight: 600;
+    }
+
+    /* ── 스토리 카드 그리드 ── */
+    .story-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    /* ── 스토리 카드 ── */
+    .story-card {
+      background: rgba(253,245,228,0.92);
+      border: 1.5px solid #c8a87a;
+      border-radius: 12px;
+      padding: 1.2rem 1.1rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      transition: all 0.15s;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+    .story-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      border-color: #c8902a;
+    }
+    .story-card-genre {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #c8902a;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+    }
+    .story-card-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #3d2b1f;
+      font-family: 'Pretendard', Georgia, serif;
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .story-card-desc {
+      font-size: 0.78rem;
+      color: #7a5c3e;
+      line-height: 1.55;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 0.75rem;
+    }
+    .story-card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.68rem;
+      color: #a08060;
+      font-weight: 600;
+    }
+    .story-card-author { display: flex; align-items: center; gap: 0.25rem; }
+    .story-card-views  { display: flex; align-items: center; gap: 0.2rem; }
+
+    /* ── 빈 상태 ── */
+    .empty-genre {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 2.5rem;
+      color: rgba(245,222,179,0.4);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* ── 전체 빈 상태 ── */
+    .empty-all {
+      text-align: center;
+      padding: 5rem 2rem;
+      color: rgba(245,222,179,0.5);
+    }
+    .empty-all .icon { font-size: 3rem; margin-bottom: 1rem; }
+    .empty-all h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 0.5rem; color: rgba(245,222,179,0.7); }
+    .empty-all p  { font-size: 0.88rem; }
+  </style>
+</head>
+<body>
+
+  <!-- ── 내비게이션 바 ── -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-brand">📚 동네서점</a>
+    <ul class="navbar-nav">
+      <li><a href="index.html">홈</a></li>
+      <li><a href="author.html">내 이야기</a></li>
+      <li><a href="read.html" class="active">스토리 찾기</a></li>
+    </ul>
+    <div class="navbar-search">
+      <span class="navbar-search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="스토리 검색..." oninput="handleSearch()">
+    </div>
+    <div class="navbar-right">
+      <span class="navbar-username">작가님</span>
+      <button class="navbar-logout">로그아웃</button>
+    </div>
+  </nav>
+
+  <!-- ── 메인 ── -->
+  <div class="read-main">
+
+    <div class="read-title">
+      <h1>📖 이야기 서재</h1>
+      <p>작가들이 완성한 이야기들을 장르별로 만나보세요</p>
+    </div>
+
+    <!-- 장르 탭 -->
+    <div class="genre-tabs" id="genre-tabs"></div>
+
+    <!-- 장르별 섹션 -->
+    <div id="genre-sections"></div>
+
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    const GENRES = ['전체', 'SF', '판타지', '로맨스', '공포', '미스터리', '기타'];
+    const GENRE_ICONS = { '전체':'🗂️', 'SF':'🚀', '판타지':'🧙', '로맨스':'💌', '공포':'👻', '미스터리':'🔍', '기타':'📝' };
+    let currentGenre = '전체';
+    let searchQuery = '';
+
+    function getPublished() {
+      return Storage.getAll().filter(s => s.published);
+    }
+
+    function getStoryGenre(st) {
+      return st.genre || '기타';
+    }
+
+    function matchesSearch(st) {
+      if (!searchQuery) return true;
+      const q = searchQuery.toLowerCase();
+      return st.title.toLowerCase().includes(q)
+          || (st.description || '').toLowerCase().includes(q)
+          || (st.author || '').toLowerCase().includes(q);
+    }
+
+    function buildTabs(stories) {
+      const tabs = document.getElementById('genre-tabs');
+      // 실제 존재하는 장르만 탭에 표시 (전체 포함)
+      const existing = new Set(stories.map(getStoryGenre));
+      const visibleGenres = ['전체', ...GENRES.slice(1).filter(g => existing.has(g))];
+
+      tabs.innerHTML = visibleGenres.map(g => `
+        <button class="genre-tab ${g === currentGenre ? 'active' : ''}"
+                onclick="selectGenre('${g}')">
+          ${GENRE_ICONS[g] || '📝'} ${g}
+        </button>`).join('');
+    }
+
+    function buildSections(stories) {
+      const container = document.getElementById('genre-sections');
+      const filtered = stories.filter(matchesSearch);
+
+      if (!filtered.length) {
+        container.innerHTML = `
+          <div class="empty-all">
+            <div class="icon">📭</div>
+            <h3>${searchQuery ? '검색 결과가 없어요' : '아직 공개된 이야기가 없어요'}</h3>
+            <p>${searchQuery ? '다른 키워드로 검색해보세요' : '첫 번째 이야기를 써보실래요?'}</p>
+          </div>`;
+        return;
+      }
+
+      // 장르별로 묶기
+      const genreMap = {};
+      filtered.forEach(st => {
+        const g = getStoryGenre(st);
+        if (!genreMap[g]) genreMap[g] = [];
+        genreMap[g].push(st);
+      });
+
+      const genres = currentGenre === '전체'
+        ? Object.keys(genreMap)
+        : (genreMap[currentGenre] ? [currentGenre] : []);
+
+      if (!genres.length) {
+        container.innerHTML = `
+          <div class="empty-all">
+            <div class="icon">📭</div>
+            <h3>이 장르에는 아직 이야기가 없어요</h3>
+            <p>다른 장르를 탐색해보세요</p>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = genres.map(genre => {
+        const list = genreMap[genre];
+        const cards = list.map(st => `
+          <a class="story-card" href="play.html?id=${st.id}">
+            <div class="story-card-genre">${GENRE_ICONS[genre] || '📝'} ${genre}</div>
+            <div class="story-card-title">${escapeHtml(st.title)}</div>
+            <div class="story-card-desc">${escapeHtml(st.description || '줄거리가 없어요.')}</div>
+            <div class="story-card-meta">
+              <span class="story-card-author">✍️ ${escapeHtml(st.author || '익명')}</span>
+              <span class="story-card-views">👁 ${st.views || 0}</span>
+            </div>
+          </a>`).join('');
+
+        return `
+          <div class="genre-section">
+            <div class="genre-label">
+              <span class="genre-label-text">${GENRE_ICONS[genre] || '📝'} ${genre}</span>
+              <span class="genre-label-line"></span>
+              <span class="genre-count">${list.length}편</span>
+            </div>
+            <div class="story-grid">${cards}</div>
+          </div>`;
+      }).join('');
+    }
+
+    function selectGenre(genre) {
+      currentGenre = genre;
+      render();
+    }
+
+    function handleSearch() {
+      searchQuery = document.getElementById('search-input').value.trim();
+      render();
+    }
+
+    function render() {
+      const stories = getPublished();
+      buildTabs(stories);
+      buildSections(stories);
+    }
+
+    initSampleData();
+    render();
+  </script>
+</body>
+</html>
