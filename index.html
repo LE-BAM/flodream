@@ -80,27 +80,18 @@
     }
     .feat-char {
       position: relative; flex-shrink: 0;
-      width: 180px; align-self: flex-end;
+      width: 220px; align-self: flex-end;
       margin-right: -10px; z-index: 2;
     }
-    .feat-char img {
+    .feat-char img.char-img {
       width: 100%; height: auto; display: block;
-      image-rendering: pixelated;
+      object-fit: contain;
       filter: drop-shadow(0 6px 12px rgba(0,0,0,0.25));
     }
-    .speech-bubble {
-      position: absolute; bottom: 90%; left: 60%;
-      background: rgba(253,245,228,0.97); border: 2px solid var(--border); border-radius: 14px;
-      padding: 0.65rem 1rem; font-size: 0.78rem; font-weight: 700; color: var(--text);
-      white-space: nowrap; box-shadow: var(--shadow); line-height: 1.5; z-index: 3;
-    }
-    .speech-bubble::after {
-      content: ''; position: absolute; bottom: -11px; left: 18%;
-      border: 6px solid transparent; border-top-color: var(--border);
-    }
-    .speech-bubble::before {
-      content: ''; position: absolute; bottom: -8px; left: calc(18% + 1px);
-      border: 5px solid transparent; border-top-color: rgba(253,245,228,0.97); z-index: 1;
+    .feat-char .bubble-img {
+      position: absolute; bottom: 88%; left: 50%;
+      width: 180px; height: auto;
+      z-index: 3;
     }
 
     /* Feature cards */
@@ -219,8 +210,8 @@
     <div class="feat-area">
       <!-- 캐릭터: write 카드 왼쪽에 붙어서 서 있음 -->
       <div class="feat-char">
-        <div class="speech-bubble">여기에 당신만의 멋진<br>이야기를 담아주세요!</div>
-        <img src="owner.png" alt="서점 주인">
+        <img src="bubble.png" alt="말풍선" class="bubble-img">
+        <img src="owner.png" alt="서점 주인" class="char-img">
       </div>
       <div class="feat-grid">
         <a href="author.html" class="feat-card feat-card-img">
