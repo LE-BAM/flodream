@@ -21,14 +21,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 2.5rem 1rem 3rem;
+      padding: 1rem;
     }
 
     /* ── 패널 래퍼 ── */
     .panel-wrap {
       position: relative;
-      width: 100%;
-      max-width: 820px;
+      /* 화면 꽉 차게: 너비는 뷰포트 92%, 높이가 넘치면 높이 기준으로 제한 */
+      width: min(92vw, calc((100vh - 80px) * 2752 / 1536));
     }
 
     /* ── Tool 이미지 (전체 패널 배경) ── */
