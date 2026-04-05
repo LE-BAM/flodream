@@ -43,32 +43,31 @@
     }
 
     /* ── 스토리 목록 오버레이 ── */
-    /* Too.png 이미지 rows 영역에 정밀 맞춤 */
+    /* Too.png 이미지 row 영역 픽셀 분석 기반 (4096x2286):
+       rows top ~620px=27%, bottom ~1710px=75%, left ~330px=8%, right ~2870px=70% */
     .story-overlay {
       position: absolute;
-      top: 28%;     /* 헤더+컬럼헤더 아래 첫 row 시작 */
-      bottom: 14%;  /* footer 닫기 위 */
-      left: 20%;    /* 이미지 icon 컬럼 오른쪽부터 */
-      right: 5%;    /* 이미지 frame 안쪽 */
+      top: 27%;
+      bottom: 25%;
+      left: 8%;
+      right: 31%;
       overflow-y: auto;
       overflow-x: hidden;
       display: flex;
       flex-direction: column;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(139,94,60,0.2) transparent;
+      scrollbar-width: none;
     }
-    .story-overlay::-webkit-scrollbar { width: 4px; }
-    .story-overlay::-webkit-scrollbar-thumb { background: rgba(139,94,60,0.2); border-radius: 2px; }
+    .story-overlay::-webkit-scrollbar { display: none; }
 
-    /* ── 스토리 행 (배경 투명 — 이미지 row 배경 그대로 사용) ── */
+    /* ── 스토리 행 — 이미지 1행 높이에 맞춰 고정 (4행 균등) ── */
     .story-row {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0 0.5rem;
-      flex: 1;  /* 이미지의 4 rows에 균등 분배 */
-      min-height: 0;
-      background: transparent;  /* 완전 투명 */
+      padding: 0 0.75rem 0 0.4rem;
+      height: 25%;        /* overlay 4등분 = 이미지 행 1개 높이 */
+      flex-shrink: 0;
+      background: transparent;
     }
 
     /* 상태 뱃지 */
@@ -119,12 +118,12 @@
     }
     .empty-overlay span { font-size: 2rem; }
 
-    /* ── 새 이야기 버튼 (타이틀 배너 우측에 오버레이) ── */
+    /* ── 새 이야기 버튼 (이미지 우측 타이틀 영역 근처) ── */
     .btn-new {
       position: absolute;
-      top: 13%;
-      right: 12%;
-      background: rgba(200,144,42,0.9);
+      top: 17%;
+      left: 55%;
+      background: rgba(200,144,42,0.92);
       border: 2px solid #f0b84a;
       color: #fff; font-size: 0.75rem; font-weight: 700;
       padding: 0.25rem 0.9rem; border-radius: 999px;
@@ -134,27 +133,26 @@
     }
     .btn-new:hover { background: rgba(168,112,30,0.95); }
 
-    /* ── X 닫기 (이미지 우상단 X 위 투명 영역) ── */
+    /* ── X 닫기 (이미지 패널 우상단 X 위치) ── */
     .btn-x {
       position: absolute;
-      top: 1%;
-      right: 2.5%;
-      width: 7%;
-      height: 13%;
+      top: 10%;
+      left: 67%;
+      width: 5%;
+      height: 8%;
       cursor: pointer;
       background: transparent;
       border: none;
       z-index: 5;
     }
 
-    /* ── 닫기 버튼 (하단 닫기 배너 위 투명 영역) ── */
+    /* ── 닫기 버튼 (이미지 하단 닫기 배너) ── */
     .btn-close-bottom {
       position: absolute;
-      bottom: 1.5%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 18%;
-      height: 12%;
+      bottom: 9%;
+      left: 14%;
+      width: 20%;
+      height: 10%;
       cursor: pointer;
       background: transparent;
       border: none;
