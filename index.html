@@ -105,7 +105,21 @@
       backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
       min-height: 180px;
     }
-    .feat-card:has(img) { padding: 0; }
+    .feat-card-img {
+      padding: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+    .feat-card-img img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: var(--radius);
+    }
+    .feat-card-img:hover { transform: translateY(-4px); box-shadow: var(--shadow-card); }
     .feat-card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
       background: var(--accent); opacity: 0.6;
@@ -193,8 +207,8 @@
   <!-- Feature Cards -->
   <div class="feat-section">
     <div class="feat-grid">
-      <a href="author.html" class="feat-card">
-        <img src="storywrite.png" alt="내 이야기 쓰기" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit;">
+      <a href="author.html" class="feat-card feat-card-img">
+        <img src="storywrite.png" alt="내 이야기 쓰기">
       </a>
       <a href="author.html" class="feat-card">
         <span class="feat-icon">📁</span>
