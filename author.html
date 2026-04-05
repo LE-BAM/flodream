@@ -10,219 +10,186 @@
       background: url('bookstore.png') center top / cover fixed;
       background-color: #3a2410;
       min-height: 100vh;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 2rem 1rem;
     }
 
-    /* ── 나무 패널 전체 ── */
-    .panel {
-      width: 100%; max-width: 880px;
-      border-radius: 18px;
-      border: 6px solid #4a2808;
-      box-shadow:
-        0 0 0 3px #7a4820,
-        0 12px 48px rgba(0,0,0,0.7),
-        inset 0 0 0 2px #c8902a;
-      overflow: hidden;
-      background: #2e1508;
-    }
-
-    /* ── 패널 상단 헤더 ── */
-    .panel-header {
-      background: linear-gradient(180deg, #3d1f08 0%, #2e1508 100%);
-      border-bottom: 4px solid #5a3010;
-      padding: 1.1rem 1.5rem;
-      display: flex; align-items: center; justify-content: space-between;
+    /* ── 패널 래퍼 (Tool.png 비율 유지) ── */
+    .panel-wrap {
       position: relative;
+      width: 100%;
+      max-width: 960px;
+      /* 2752 : 1536 = 16 : ~8.95 ≈ aspect-ratio 2752/1536 */
+      aspect-ratio: 2752 / 1536;
+      background: url('Tool.png') no-repeat center / 100% 100%;
+      filter: drop-shadow(0 16px 48px rgba(0,0,0,0.75));
     }
-    .panel-title {
-      font-size: 1.4rem; font-weight: 800;
-      color: #f5deb3; font-family: 'Pretendard', serif;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.6);
-      letter-spacing: -0.3px;
-    }
-    .panel-header-right { display: flex; align-items: center; gap: 0.75rem; }
-    .panel-new-btn {
-      display: flex; align-items: center; gap: 0.4rem;
-      padding: 0.45rem 1.1rem; border-radius: 999px;
-      background: #c8902a; border: 2px solid #f0b84a;
-      color: #fff; font-size: 0.85rem; font-weight: 700;
-      cursor: pointer; font-family: inherit; transition: all 0.15s;
-    }
-    .panel-new-btn:hover { background: #a87020; }
-    .panel-close {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: #8b2020; border: 2px solid #c04040;
-      color: #fff; font-size: 1rem; font-weight: 700;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      transition: all 0.15s; text-decoration: none;
-    }
-    .panel-close:hover { background: #6b1818; }
 
-    /* ── 테이블 헤더 ── */
-    .table-head {
-      display: grid; grid-template-columns: 110px 1fr 220px;
-      background: #5a3010;
-      padding: 0.7rem 1.5rem; gap: 1rem;
-      border-bottom: 2px solid #3d1f08;
+    /* ── 스토리 목록 오버레이 (rows 영역) ── */
+    .story-overlay {
+      position: absolute;
+      top: 22%;
+      left: 7%;
+      right: 7%;
+      bottom: 20%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(139,94,60,0.4) transparent;
     }
-    .table-head span {
-      font-size: 0.82rem; font-weight: 800;
-      color: #f5deb3; text-align: center; letter-spacing: 0.05em;
-    }
-    .table-head span:nth-child(2) { text-align: left; }
+    .story-overlay::-webkit-scrollbar { width: 4px; }
+    .story-overlay::-webkit-scrollbar-thumb { background: rgba(139,94,60,0.35); border-radius: 2px; }
 
-    /* ── 테이블 바디 ── */
-    .table-body { background: #f5e6c8; }
-    .table-row {
-      display: grid; grid-template-columns: 110px 1fr 220px;
-      padding: 0.9rem 1.5rem; gap: 1rem; align-items: center;
-      border-bottom: 1px solid #d9c09a;
-      transition: background 0.15s;
+    /* ── 스토리 행 ── */
+    .story-row {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0 0.75rem;
+      min-height: 54px;
+      border-bottom: 1px solid rgba(200,168,120,0.25);
+      transition: background 0.12s;
     }
-    .table-row:nth-child(even) { background: #fdf5e4; }
-    .table-row:nth-child(odd) { background: #f0ddb0; }
-    .table-row:hover { background: #e8cc90; }
-    .table-row:last-child { border-bottom: none; }
+    .story-row:nth-child(odd)  { background: rgba(240,221,176,0.75); }
+    .story-row:nth-child(even) { background: rgba(253,245,228,0.75); }
+    .story-row:hover           { background: rgba(232,210,144,0.88); }
+    .story-row:last-child      { border-bottom: none; }
 
-    /* 상태 뱃지 */
+    /* 상태 배지 */
     .status-badge {
-      display: inline-flex; align-items: center; justify-content: center; gap: 0.3rem;
-      padding: 0.3rem 0.8rem; border-radius: 999px;
-      font-size: 0.78rem; font-weight: 700;
-      white-space: nowrap; margin: 0 auto;
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem;
+      padding: 0.2rem 0.55rem; border-radius: 999px;
+      font-size: 0.68rem; font-weight: 700; white-space: nowrap;
     }
-    .status-public   { background: #d4f0e0; color: #1e7a4a; border: 1.5px solid #74c69d; }
-    .status-private  { background: #fde8c8; color: #8B5E3C; border: 1.5px solid #c8a87a; }
-    .status-writing  { background: #e8d5f5; color: #6a2c8a; border: 1.5px solid #b48acc; }
+    .status-public   { background: #d4f0e0; color: #1e7a4a; border: 1px solid #74c69d; }
+    .status-writing  { background: #e8d5f5; color: #6a2c8a; border: 1px solid #b48acc; }
+    .status-private  { background: #fde8c8; color: #8B5E3C; border: 1px solid #c8a87a; }
 
     /* 제목 */
     .story-title-cell {
-      font-size: 1rem; font-weight: 700; color: #3d2b1f;
-      font-family: 'Pretendard', serif;
+      font-size: 0.88rem; font-weight: 700;
+      color: #3d2b1f; font-family: 'Pretendard', serif;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
-    /* 액션 버튼들 */
-    .action-btns {
-      display: flex; gap: 0.4rem; justify-content: center; flex-wrap: wrap;
-    }
+    /* 액션 버튼 */
+    .action-btns { display: flex; gap: 0.3rem; flex-shrink: 0; }
     .action-btn {
-      display: flex; align-items: center; gap: 0.3rem;
-      padding: 0.38rem 0.85rem; border-radius: 999px;
-      border: 2px solid #c8a87a; background: #fdf5e4;
-      color: #3d2b1f; font-size: 0.78rem; font-weight: 700;
-      cursor: pointer; font-family: inherit; transition: all 0.15s;
-      white-space: nowrap;
+      padding: 0.22rem 0.6rem; border-radius: 999px;
+      font-size: 0.68rem; font-weight: 700;
+      font-family: 'Pretendard', sans-serif;
+      cursor: pointer; border: 1.5px solid; white-space: nowrap;
+      transition: all 0.12s;
     }
-    .action-btn:hover { background: #8B5E3C; color: #fff; border-color: #8B5E3C; }
-    .action-btn-publish { border-color: #74c69d; color: #1e7a4a; }
-    .action-btn-publish:hover { background: #2d6a4f; color: #fff; border-color: #2d6a4f; }
-    .action-btn-unpublish { border-color: #c8a87a; color: #8B5E3C; }
-    .action-btn-danger { border-color: #e07070; color: #a03030; }
-    .action-btn-danger:hover { background: #a03030; color: #fff; border-color: #a03030; }
+    .ab-edit    { background: rgba(139,94,60,0.08); color: #8B5E3C; border-color: rgba(139,94,60,0.3); }
+    .ab-edit:hover { background: #8B5E3C; color: #fff; }
+    .ab-pub     { background: rgba(93,138,60,0.08); color: #5d8a3c; border-color: rgba(93,138,60,0.3); }
+    .ab-pub:hover { background: #5d8a3c; color: #fff; }
+    .ab-unpub   { background: rgba(139,94,60,0.08); color: #8B5E3C; border-color: rgba(139,94,60,0.3); }
+    .ab-unpub:hover { background: #8B5E3C; color: #fff; }
+    .ab-del     { background: rgba(192,64,64,0.08); color: #c04040; border-color: rgba(192,64,64,0.25); }
+    .ab-del:hover { background: #c04040; color: #fff; }
 
     /* 빈 상태 */
-    .empty-row {
-      padding: 3.5rem 2rem; text-align: center;
-      background: #fdf5e4; color: #a08060;
-    }
-    .empty-row p { margin-top: 0.5rem; font-size: 0.88rem; }
-
-    /* ── 패널 하단 푸터 ── */
-    .panel-footer {
-      background: linear-gradient(0deg, #3d1f08 0%, #2e1508 100%);
-      border-top: 4px solid #5a3010;
-      padding: 1rem 1.5rem;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .footer-stats {
-      display: flex; gap: 1.5rem;
-    }
-    .footer-stat { text-align: center; }
-    .footer-stat-num { font-size: 1.2rem; font-weight: 800; color: #f5deb3; }
-    .footer-stat-lbl { font-size: 0.68rem; color: #c8a060; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
-    .footer-close {
-      display: flex; align-items: center; gap: 0.4rem;
-      padding: 0.5rem 1.5rem; border-radius: 999px;
-      background: #4a2808; border: 2px solid #8b5e3c;
-      color: #f5deb3; font-size: 0.88rem; font-weight: 700;
-      cursor: pointer; font-family: inherit; transition: all 0.15s;
-      text-decoration: none;
-    }
-    .footer-close:hover { background: #3a1808; border-color: #c8902a; }
-
-    /* ── 새 스토리 모달 ── */
-    .create-modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7); z-index: 200;
+    .empty-overlay {
+      display: flex; flex-direction: column;
       align-items: center; justify-content: center;
+      height: 100%; gap: 0.4rem;
+      color: rgba(90,48,16,0.45); font-size: 0.8rem; font-weight: 600;
     }
-    .create-modal-overlay.open { display: flex; }
-    .create-modal {
-      background: #fdf5e4; border-radius: 14px;
-      border: 3px solid #c8a87a;
-      padding: 2rem; width: 100%; max-width: 440px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    .empty-overlay span { font-size: 2rem; }
+
+    /* ── 새 이야기 버튼 (패널 우상단 부근 오버레이) ── */
+    .btn-new-story {
+      position: absolute;
+      top: 7%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(200,144,42,0.92);
+      border: 2px solid #f0b84a;
+      color: #fff; font-size: 0.78rem; font-weight: 700;
+      padding: 0.28rem 1rem; border-radius: 999px;
+      cursor: pointer; font-family: 'Pretendard', sans-serif;
+      white-space: nowrap; z-index: 5;
+      transition: background 0.15s;
     }
-    .create-modal h2 {
-      font-size: 1.2rem; font-weight: 800; color: #3d2b1f;
-      font-family: 'Pretendard', serif; margin-bottom: 1.25rem;
+    .btn-new-story:hover { background: rgba(168,112,32,0.95); }
+
+    /* ── X 닫기 버튼 (이미지 우상단 X 위치에 투명 클릭 영역) ── */
+    .btn-x {
+      position: absolute;
+      top: 1.5%;
+      right: 3%;
+      width: 6.5%;
+      height: 12%;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      z-index: 5;
     }
 
-    /* 삭제 확인 모달 */
-    .delete-modal-overlay {
+    /* ── 닫기 버튼 (이미지 하단 닫기 배너 위 투명 클릭 영역) ── */
+    .btn-close-bottom {
+      position: absolute;
+      bottom: 2%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16%;
+      height: 12%;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      z-index: 5;
+    }
+
+    /* ── 모달 ── */
+    .modal-overlay {
       display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7); z-index: 200;
+      background: rgba(0,0,0,0.65);
       align-items: center; justify-content: center;
+      z-index: 200; backdrop-filter: blur(4px);
     }
-    .delete-modal-overlay.open { display: flex; }
-    .delete-modal {
+    .modal-overlay.open { display: flex; }
+    .modal-box {
       background: #fdf5e4; border-radius: 14px;
-      border: 3px solid #e07070;
-      padding: 2rem; width: 100%; max-width: 380px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+      border: 2.5px solid #c8a87a;
+      padding: 1.75rem; width: 90%; max-width: 440px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.45);
     }
-    .delete-modal h2 { font-size: 1.1rem; font-weight: 800; color: #a03030; margin-bottom: 0.75rem; }
+    .modal-box h2 { font-size: 1.1rem; font-weight: 800; color: #3d2b1f; margin-bottom: 1.1rem; font-family: 'Pretendard', serif; }
+    .modal-footer { display: flex; gap: 0.6rem; justify-content: flex-end; margin-top: 1.1rem; }
+
+    @media (max-width: 640px) {
+      .panel-wrap { max-width: 100%; }
+      .story-row { grid-template-columns: 60px 1fr auto; min-height: 40px; }
+      .action-btn { font-size: 0.6rem; padding: 0.18rem 0.45rem; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- 메인 패널 -->
-  <div class="panel">
+  <div class="panel-wrap">
+    <!-- 스토리 목록 동적 영역 -->
+    <div class="story-overlay" id="story-overlay"></div>
 
-    <!-- 헤더 -->
-    <div class="panel-header">
-      <div class="panel-title">📚 내 이야기 관리</div>
-      <div class="panel-header-right">
-        <button class="panel-new-btn" onclick="openCreateModal()">✏️ 새 이야기</button>
-        <a href="index.html" class="panel-close" title="홈으로">✕</a>
-      </div>
-    </div>
+    <!-- 새 이야기 버튼 -->
+    <button class="btn-new-story" onclick="openCreateModal()">✏️ 새 이야기</button>
 
-    <!-- 테이블 헤더 -->
-    <div class="table-head">
-      <span>상태</span>
-      <span>제목</span>
-      <span>작용</span>
-    </div>
+    <!-- X 닫기 (이미지 우상단 X 위에 투명 클릭 영역) -->
+    <button class="btn-x" onclick="location.href='index.html'" title="닫기"></button>
 
-    <!-- 테이블 바디 -->
-    <div class="table-body" id="story-table"></div>
-
-    <!-- 푸터 -->
-    <div class="panel-footer">
-      <div class="footer-stats" id="footer-stats"></div>
-      <a href="index.html" class="footer-close">✕ 닫기</a>
-    </div>
+    <!-- 닫기 (이미지 하단 닫기 배너 위 투명 클릭 영역) -->
+    <button class="btn-close-bottom" onclick="location.href='index.html'" title="닫기"></button>
   </div>
 
-  <!-- 새 스토리 모달 -->
-  <div class="create-modal-overlay" id="create-modal">
-    <div class="create-modal">
+  <!-- 새 이야기 모달 -->
+  <div class="modal-overlay" id="create-modal">
+    <div class="modal-box">
       <h2>✏️ 새 이야기 만들기</h2>
-      <div class="form-group"><label>제목 *</label><input type="text" id="inp-title" placeholder="예: 기사의 선택"></div>
+      <div class="form-group"><label>제목 *</label><input type="text" id="inp-title" placeholder="예: 기사의 선택" maxlength="80"></div>
       <div class="form-group"><label>한 줄 소개</label><input type="text" id="inp-desc" placeholder="독자에게 보여질 짧은 설명"></div>
       <div class="form-group"><label>작가 이름</label><input type="text" id="inp-author" placeholder="닉네임"></div>
       <div class="form-group"><label>장르</label>
@@ -240,11 +207,11 @@
   </div>
 
   <!-- 삭제 확인 모달 -->
-  <div class="delete-modal-overlay" id="delete-modal">
-    <div class="delete-modal">
+  <div class="modal-overlay" id="delete-modal">
+    <div class="modal-box">
       <h2>🗑 스토리 삭제</h2>
-      <p style="color:#7a5c3e;font-size:0.9rem">삭제하면 복구할 수 없어요. 정말 삭제하시겠어요?</p>
-      <p id="delete-title" style="margin-top:0.75rem;font-weight:700;font-size:0.95rem;color:#3d2b1f"></p>
+      <p style="color:#7a5c3e;font-size:0.88rem">삭제하면 복구할 수 없어요. 정말 삭제하시겠어요?</p>
+      <p id="delete-title-txt" style="margin-top:0.6rem;font-weight:700;font-size:0.92rem;color:#3d2b1f"></p>
       <div class="modal-footer">
         <button class="btn btn-ghost btn-sm" onclick="closeDeleteModal()">취소</button>
         <button class="btn btn-danger btn-sm" onclick="confirmDelete()">삭제</button>
@@ -265,39 +232,24 @@
 
     function render() {
       const stories = Storage.getAll();
-      const pub = stories.filter(s => s.published).length;
-      const nodes = stories.reduce((s, st) => s + Object.keys(st.nodes || {}).length, 0);
-
-      document.getElementById('footer-stats').innerHTML = `
-        <div class="footer-stat"><div class="footer-stat-num">${stories.length}</div><div class="footer-stat-lbl">전체</div></div>
-        <div class="footer-stat"><div class="footer-stat-num">${pub}</div><div class="footer-stat-lbl">공개</div></div>
-        <div class="footer-stat"><div class="footer-stat-num">${nodes}</div><div class="footer-stat-lbl">총 장면</div></div>`;
-
-      const table = document.getElementById('story-table');
-      if (stories.length === 0) {
-        table.innerHTML = `
-          <div class="empty-row">
-            <div style="font-size:2.5rem">✍️</div>
-            <p>아직 작성한 이야기가 없어요.<br>새 이야기 버튼을 눌러 시작해보세요!</p>
-          </div>`;
+      const el = document.getElementById('story-overlay');
+      if (!stories.length) {
+        el.innerHTML = `<div class="empty-overlay"><span>📖</span><p>아직 이야기가 없어요</p></div>`;
         return;
       }
-
-      table.innerHTML = stories.map(st => {
+      el.innerHTML = stories.map(st => {
         const s = getStatus(st);
+        const pubBtn = st.published
+          ? `<button class="action-btn ab-unpub" onclick="togglePublish('${st.id}')">🔒 비공개</button>`
+          : `<button class="action-btn ab-pub"   onclick="togglePublish('${st.id}')">🚀 공개</button>`;
         return `
-          <div class="table-row">
-            <div style="display:flex;justify-content:center">
-              <span class="status-badge ${s.cls}">${s.icon} ${s.label}</span>
-            </div>
+          <div class="story-row">
+            <div><span class="status-badge ${s.cls}">${s.icon} ${s.label}</span></div>
             <div class="story-title-cell" title="${escapeHtml(st.title)}">${escapeHtml(st.title)}</div>
             <div class="action-btns">
-              <button class="action-btn" onclick="location.href='editor.html?id=${st.id}'">✏️ 수정</button>
-              <button class="action-btn ${st.published ? 'action-btn-unpublish' : 'action-btn-publish'}"
-                onclick="togglePublish('${st.id}')">
-                ${st.published ? '🔒 비공개' : '🚀 공개'}
-              </button>
-              <button class="action-btn action-btn-danger" onclick="openDeleteModal('${st.id}')">🗑</button>
+              <button class="action-btn ab-edit" onclick="location.href='editor.html?id=${st.id}'">✏️ 수정</button>
+              ${pubBtn}
+              <button class="action-btn ab-del" onclick="openDeleteModal('${st.id}')">🗑</button>
             </div>
           </div>`;
       }).join('');
@@ -335,7 +287,7 @@
     }
     function openDeleteModal(id) {
       deleteId = id;
-      document.getElementById('delete-title').textContent = Storage.get(id)?.title || '';
+      document.getElementById('delete-title-txt').textContent = Storage.get(id)?.title || '';
       document.getElementById('delete-modal').classList.add('open');
     }
     function closeDeleteModal() {
