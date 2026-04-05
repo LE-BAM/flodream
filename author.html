@@ -43,36 +43,33 @@
     }
 
     /* ── 스토리 목록 오버레이 ── */
-    /* Tool.png 내 rows 영역 위치에 맞춤 */
+    /* Too.png 이미지 rows 영역에 정밀 맞춤 */
     .story-overlay {
       position: absolute;
-      top: 22%;
-      left: 7%;
-      right: 7%;
-      bottom: 20%;
+      top: 28%;     /* 헤더+컬럼헤더 아래 첫 row 시작 */
+      bottom: 14%;  /* footer 닫기 위 */
+      left: 20%;    /* 이미지 icon 컬럼 오른쪽부터 */
+      right: 5%;    /* 이미지 frame 안쪽 */
       overflow-y: auto;
       overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
       scrollbar-width: thin;
-      scrollbar-color: rgba(139,94,60,0.3) transparent;
+      scrollbar-color: rgba(139,94,60,0.2) transparent;
     }
     .story-overlay::-webkit-scrollbar { width: 4px; }
-    .story-overlay::-webkit-scrollbar-thumb { background: rgba(139,94,60,0.3); border-radius: 2px; }
+    .story-overlay::-webkit-scrollbar-thumb { background: rgba(139,94,60,0.2); border-radius: 2px; }
 
-    /* ── 스토리 행 ── */
+    /* ── 스토리 행 (배경 투명 — 이미지 row 배경 그대로 사용) ── */
     .story-row {
-      display: grid;
-      grid-template-columns: 110px 1fr auto;
+      display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.55rem 0.9rem;
-      min-height: 50px;
-      border-bottom: 1px solid rgba(200,160,90,0.2);
-      transition: background 0.1s;
+      padding: 0 0.5rem;
+      flex: 1;  /* 이미지의 4 rows에 균등 분배 */
+      min-height: 0;
+      background: transparent;  /* 완전 투명 */
     }
-    .story-row:nth-child(odd)  { background: rgba(245,230,195,0.78); }
-    .story-row:nth-child(even) { background: rgba(255,250,235,0.78); }
-    .story-row:hover           { background: rgba(235,210,155,0.9); }
-    .story-row:last-child      { border-bottom: none; }
 
     /* 상태 뱃지 */
     .status-badge {
@@ -86,9 +83,11 @@
 
     /* 제목 */
     .title-cell {
-      font-size: 0.88rem; font-weight: 700;
+      flex: 1;
+      font-size: 0.9rem; font-weight: 700;
       color: #3d2b1f;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      min-width: 0;
     }
 
     /* 액션 버튼 */
@@ -283,9 +282,9 @@
           : `<button class="action-btn ab-pub"   onclick="togglePublish('${st.id}')">🚀 공개</button>`;
         return `
           <div class="story-row">
-            <div><span class="status-badge ${s.cls}">${s.icon} ${s.label}</span></div>
+            <span class="status-badge ${s.cls}" style="flex-shrink:0">${s.icon} ${s.label}</span>
             <div class="title-cell" title="${escapeHtml(st.title)}">${escapeHtml(st.title)}</div>
-            <div class="action-btns">
+            <div class="action-btns" style="flex-shrink:0">
               <button class="action-btn ab-edit" onclick="location.href='editor.html?id=${st.id}'">✏️ 수정</button>
               ${pubBtn}
               <button class="action-btn ab-del" onclick="openDeleteModal('${st.id}')">🗑</button>
